@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Query
 from typing import Optional
 from models.message import MessageCreate, MessageResponse, MessageListResponse
-from core.security import get_current_user, encrypt_message
+from core.security import get_current_user, encrypt_message, decrypt_message
 from db.supabase_client import insert_message, get_user_messages, get_message_by_id
 
 
@@ -51,7 +51,8 @@ async def get_messages(
     
     - Requires authentication via Bearer token
     - Optional filter by status (scheduled, sent, failed)
-    - Returns list of messages (content remains encrypted)
+    - Returns list of messages
+    - Decrypts content for sent messages so users can read them
     """
     try:
         messages = await get_user_messages(
@@ -59,9 +60,20 @@ async def get_messages(
             status=status_filter
         )
         
+        # For sent messages, include decrypted content
+        response_messages = []
+        for msg in messages:
+            msg_response = MessageResponse(**msg)
+            if msg.get("status") == "sent":
+                try:
+                    msg_response.decrypted_content = decrypt_message(msg["encrypted_content"])
+                except Exception:
+                    msg_response.decrypted_content = None
+            response_messages.append(msg_response)
+        
         return MessageListResponse(
-            messages=[MessageResponse(**msg) for msg in messages],
-            total=len(messages)
+            messages=response_messages,
+            total=len(response_messages)
         )
     
     except Exception as e:

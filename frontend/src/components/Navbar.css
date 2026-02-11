@@ -33,6 +33,11 @@
     opacity: 0.8;
 }
 
+.navbar-brand .navbar-logo-custom {
+    width: 120px;
+    height: 60px;
+}
+
 .navbar-menu {
     display: flex;
     gap: 1.5rem;

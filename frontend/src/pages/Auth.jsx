@@ -1,16 +1,18 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Lock, Mail, KeyRound } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
 import LoadingSpinner from '../components/LoadingSpinner'
 import './Auth.css'
+import DearMELogo from '../components/DearMELogo'
 
 const Auth = () => {
     const [isSignUp, setIsSignUp] = useState(false)
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
+    const [confirmPassword, setConfirmPassword] = useState('')
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState('')
+    const [showPassword, setShowPassword] = useState(false)
 
     const { signIn, signUp } = useAuth()
     const navigate = useNavigate()
@@ -18,6 +20,13 @@ const Auth = () => {
     const handleSubmit = async (e) => {
         e.preventDefault()
         setError('')
+
+        // Validate password confirmation for signup
+        if (isSignUp && password !== confirmPassword) {
+            setError('The passphrases must align. Please check and try again.')
+            return
+        }
+
         setLoading(true)
 
         try {
@@ -35,80 +44,158 @@ const Auth = () => {
     }
 
     return (
-        <div className="auth-container">
-            <div className="auth-card">
-                <div className="auth-header">
-                    <Lock size={48} className="auth-icon" />
-                    <h1 className="auth-title">DearME</h1>
-                    <p className="auth-subtitle">
-                        Send encrypted messages to your future self
-                    </p>
-                </div>
+        <div className="auth-container ethereal-bg">
+            {/* Ambient orbs */}
+            <div className="ambient-orb orb-1"></div>
+            <div className="ambient-orb orb-2"></div>
 
-                <form onSubmit={handleSubmit} className="auth-form">
-                    <div className="form-group">
-                        <label htmlFor="email" className="form-label">
-                            <Mail size={18} />
-                            Email
-                        </label>
-                        <input
-                            type="email"
-                            id="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            required
-                            className="form-input"
-                            placeholder="your@email.com"
-                            disabled={loading}
-                        />
+            <main className="auth-main">
+                <div className="auth-card-wrapper">
+                    <div className="glass-card auth-card">
+                        {/* Top glow */}
+                        <div className="card-glow"></div>
+
+                        {/* Header */}
+                        <div className="auth-header">
+                            <div className="auth-icon-wrapper">
+                                <DearMELogo className="auth-logo-custom" />
+                            </div>
+                            <h1 className="auth-title font-serif italic">DearME</h1>
+                            <p className="auth-subtitle">
+                                {isSignUp
+                                    ? 'Step into the river of time'
+                                    : 'Welcome back, time traveller'}
+                            </p>
+                        </div>
+
+                        {/* Form */}
+                        <form onSubmit={handleSubmit} className="auth-form">
+                            {/* Email Field */}
+                            <div className="form-group">
+                                <label htmlFor="email" className="form-label">
+                                    Traveller
+                                </label>
+                                <div className="input-underline">
+                                    <input
+                                        type="email"
+                                        id="email"
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
+                                        required
+                                        className="input-field"
+                                        placeholder="Who are you?"
+                                        disabled={loading}
+                                    />
+                                    <span className="material-symbols-outlined input-icon">person_outline</span>
+                                </div>
+                            </div>
+
+                            {/* Password Field */}
+                            <div className="form-group">
+                                <label htmlFor="password" className="form-label">
+                                    {isSignUp ? 'Choose Passphrase' : 'Passphrase'}
+                                </label>
+                                <div className="input-underline">
+                                    <input
+                                        type={showPassword ? 'text' : 'password'}
+                                        id="password"
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                        required
+                                        className="input-field"
+                                        placeholder={isSignUp ? "Create your secret..." : "The secret word..."}
+                                        minLength={6}
+                                        disabled={loading}
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        className="password-toggle"
+                                    >
+                                        <span className="material-symbols-outlined">
+                                            {showPassword ? 'visibility' : 'visibility_off'}
+                                        </span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            {/* Confirm Password Field - Only for Sign Up */}
+                            {isSignUp && (
+                                <div className="form-group">
+                                    <label htmlFor="confirmPassword" className="form-label">
+                                        Confirm Passphrase
+                                    </label>
+                                    <div className="input-underline">
+                                        <input
+                                            type={showPassword ? 'text' : 'password'}
+                                            id="confirmPassword"
+                                            value={confirmPassword}
+                                            onChange={(e) => setConfirmPassword(e.target.value)}
+                                            required
+                                            className="input-field"
+                                            placeholder="Repeat the secret..."
+                                            minLength={6}
+                                            disabled={loading}
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowPassword(!showPassword)}
+                                            className="password-toggle"
+                                        >
+                                            <span className="material-symbols-outlined">
+                                                {showPassword ? 'visibility' : 'visibility_off'}
+                                            </span>
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Error Message */}
+                            {error && <div className="error-message">{error}</div>}
+
+                            {/* Submit Button */}
+                            <div className="form-actions">
+                                <button type="submit" className="btn-primary" disabled={loading}>
+                                    <div className="btn-shimmer"></div>
+                                    <span className="btn-text">
+                                        {loading ? <LoadingSpinner /> : isSignUp ? 'Begin Journey' : 'Resume Journey'}
+                                    </span>
+                                    {!loading && (
+                                        <span className="material-symbols-outlined btn-arrow">arrow_forward</span>
+                                    )}
+                                </button>
+
+                                {/* Toggle Links */}
+                                <div className="auth-links">
+                                    <a href="#" className="auth-link">Forgotten path?</a>
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            setIsSignUp(!isSignUp)
+                                            setError('')
+                                            setConfirmPassword('')
+                                        }}
+                                        className="auth-link-toggle"
+                                        disabled={loading}
+                                    >
+                                        <span className="link-text-muted">
+                                            {isSignUp ? 'Already exploring?' : 'New here?'}
+                                        </span>
+                                        <span className="link-text-accent">
+                                            {isSignUp ? 'Sign In' : 'Begin'}
+                                        </span>
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
                     </div>
 
-                    <div className="form-group">
-                        <label htmlFor="password" className="form-label">
-                            <KeyRound size={18} />
-                            Password
-                        </label>
-                        <input
-                            type="password"
-                            id="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            required
-                            className="form-input"
-                            placeholder="••••••••"
-                            minLength={6}
-                            disabled={loading}
-                        />
+                    {/* Footer */}
+                    <div className="auth-footer">
+                        <p>© 2026 DearME. Echoes of tomorrow.</p>
                     </div>
-
-                    {error && <div className="error-message">{error}</div>}
-
-                    <button type="submit" className="btn-primary" disabled={loading}>
-                        {loading ? (
-                            <LoadingSpinner />
-                        ) : (
-                            isSignUp ? 'Sign Up' : 'Sign In'
-                        )}
-                    </button>
-                </form>
-
-                <div className="auth-toggle">
-                    <p>
-                        {isSignUp ? 'Already have an account?' : "Don't have an account?"}
-                        <button
-                            type="button"
-                            onClick={() => {
-                                setIsSignUp(!isSignUp)
-                                setError('')
-                            }}
-                            className="link-button"
-                            disabled={loading}
-                        >
-                            {isSignUp ? 'Sign In' : 'Sign Up'}
-                        </button>
-                    </p>
                 </div>
-            </div>
+            </main>
         </div>
     )
 }

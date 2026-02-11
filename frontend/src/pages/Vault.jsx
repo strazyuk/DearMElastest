@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
-import { Clock, CheckCircle, Mail } from 'lucide-react'
-import { format } from 'date-fns'
-import Navbar from '../components/Navbar'
+import { format, formatDistanceToNow } from 'date-fns'
+import { Link, useNavigate } from 'react-router-dom'
+import { useAuth } from '../contexts/AuthContext'
 import LoadingSpinner from '../components/LoadingSpinner'
 import { api } from '../services/api'
 import './Vault.css'
@@ -10,6 +10,10 @@ const Vault = () => {
     const [messages, setMessages] = useState([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null)
+    const [filter, setFilter] = useState('in-transit') // in-transit, discovered
+
+    const { user } = useAuth()
+    const navigate = useNavigate()
 
     useEffect(() => {
         fetchMessages()
@@ -27,17 +31,43 @@ const Vault = () => {
         }
     }
 
-    const scheduledMessages = messages.filter(
-        (msg) => new Date(msg.scheduled_date) > new Date()
-    )
-    const sentMessages = messages.filter(
-        (msg) => new Date(msg.scheduled_date) <= new Date()
-    )
+    const now = new Date()
+    // In Transit: Scheduled messages (not yet sent)
+    const inTransitMessages = messages
+        .filter(msg => msg.status === 'scheduled')
+        .sort((a, b) => new Date(a.scheduled_date) - new Date(b.scheduled_date))
+
+    // Sent: Messages that have been delivered
+    const sentMessages = messages
+        .filter(msg => msg.status === 'sent')
+        .sort((a, b) => new Date(b.sent_at || b.scheduled_date) - new Date(a.sent_at || a.scheduled_date))
+
+    const filteredMessages = filter === 'in-transit' ? inTransitMessages : sentMessages
+
+    const getTimeUntil = (date) => {
+        const target = new Date(date)
+        const diff = target - now
+
+        if (diff <= 0) return 'Ready to open'
+
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24))
+        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
+        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))
+
+        if (days > 365) {
+            const years = Math.floor(days / 365)
+            const months = Math.floor((days % 365) / 30)
+            const remainDays = days % 30
+            return `${years}y ${months}m ${remainDays}d`
+        }
+        if (days > 0) return `${days}d ${hours}h ${minutes}m`
+        if (hours > 0) return `${hours}h ${minutes}m`
+        return `${minutes}m`
+    }
 
     if (loading) {
         return (
-            <div className="vault">
-                <Navbar />
+            <div className="vault-root">
                 <div className="vault-loading">
                     <LoadingSpinner />
                 </div>
@@ -46,99 +76,252 @@ const Vault = () => {
     }
 
     return (
-        <div className="vault">
-            <Navbar />
-
-            <div className="vault-container">
-                <div className="vault-header">
-                    <h1>Message Vault</h1>
-                    <p>View all your encrypted time-locked messages</p>
-                </div>
-
-                {error && (
-                    <div className="error-banner">
-                        {error}
-                    </div>
-                )}
-
-                <div className="vault-section">
-                    <div className="section-header">
-                        <Clock size={24} />
-                        <h2>Scheduled Messages ({scheduledMessages.length})</h2>
+        <div className="vault-root">
+            {/* Main Layout */}
+            <div className="vault-layout">
+                {/* Left Sidebar */}
+                <aside className="vault-sidebar-left">
+                    <div className="sidebar-header">
+                        <h1 className="sidebar-title">Your Path</h1>
+                        <p className="sidebar-subtitle">Welcome home, Time Traveler.</p>
                     </div>
 
-                    {scheduledMessages.length === 0 ? (
-                        <div className="empty-state">
-                            <Clock size={48} />
-                            <p>No scheduled messages</p>
-                            <span>Messages you schedule will appear here</span>
-                        </div>
-                    ) : (
-                        <div className="message-grid">
-                            {scheduledMessages.map((message) => (
-                                <MessageCard key={message.id} message={message} status="scheduled" />
-                            ))}
-                        </div>
-                    )}
-                </div>
-
-                <div className="vault-section">
-                    <div className="section-header">
-                        <CheckCircle size={24} />
-                        <h2>Sent Messages ({sentMessages.length})</h2>
+                    <div className="sidebar-actions">
+                        <Link to="/dashboard" className="btn-new-memory">
+                            <span className="material-symbols-outlined">edit_note</span>
+                            New Memory
+                        </Link>
                     </div>
 
-                    {sentMessages.length === 0 ? (
-                        <div className="empty-state">
-                            <CheckCircle size={48} />
-                            <p>No sent messages</p>
-                            <span>Delivered messages will appear here</span>
+                    <div className="sidebar-filters">
+                        <p className="filter-label">Constellations</p>
+                        <button
+                            className={`filter-item ${filter === 'in-transit' ? 'active' : ''}`}
+                            onClick={() => setFilter('in-transit')}
+                        >
+                            <div className="filter-icon-text">
+                                <span className="material-symbols-outlined">rocket_launch</span>
+                                <span>In Transit</span>
+                            </div>
+                            <span className="filter-count">{inTransitMessages.length}</span>
+                        </button>
+                        <button
+                            className={`filter-item ${filter === 'sent' ? 'active' : ''}`}
+                            onClick={() => setFilter('sent')}
+                        >
+                            <div className="filter-icon-text">
+                                <span className="material-symbols-outlined">mark_email_read</span>
+                                <span>Sent</span>
+                            </div>
+                            <span className="filter-count">{sentMessages.length}</span>
+                        </button>
+                    </div>
+
+                    <div className="sidebar-next-reveal">
+                        <div className="next-reveal-card">
+                            <div className="next-reveal-header">
+                                <span className="material-symbols-outlined">auto_awesome</span>
+                                <span>Next Reveal</span>
+                            </div>
+                            {inTransitMessages.length > 0 ? (
+                                <>
+                                    <div className="next-reveal-info">
+                                        <p className="next-reveal-title">
+                                            {inTransitMessages[0].title || 'Untitled Memory'}
+                                        </p>
+                                        <p className="next-reveal-time">
+                                            {getTimeUntil(inTransitMessages[0].scheduled_date)}
+                                        </p>
+                                    </div>
+                                    <div className="progress-bar">
+                                        <div
+                                            className="progress-fill"
+                                            style={{
+                                                width: `${Math.min(100, Math.max(5,
+                                                    ((new Date() - new Date(inTransitMessages[0].created_at)) /
+                                                        (new Date(inTransitMessages[0].scheduled_date) - new Date(inTransitMessages[0].created_at))) * 100
+                                                ))}%`
+                                            }}
+                                        ></div>
+                                    </div>
+                                </>
+                            ) : (
+                                <p className="next-reveal-empty">No messages in flight</p>
+                            )}
                         </div>
-                    ) : (
-                        <div className="message-grid">
-                            {sentMessages.map((message) => (
-                                <MessageCard key={message.id} message={message} status="sent" />
-                            ))}
+                    </div>
+                </aside>
+
+                {/* Main Content */}
+                <main className="vault-main">
+                    <div className="vault-bg-constellation"></div>
+                    <div className="vault-bg-grid"></div>
+
+                    <div className="vault-content">
+                        {/* Timeline Line */}
+                        <div className="timeline-line"></div>
+
+                        {/* Header */}
+                        <div className="vault-content-header">
+                            <h2 className="vault-content-title">
+                                {filter === 'in-transit' ? 'Wishes in Flight' : 'Delivered Memories'}
+                            </h2>
+                            <p className="vault-content-subtitle">
+                                {filter === 'in-transit'
+                                    ? `${filteredMessages.length} memories currently drifting toward tomorrow`
+                                    : `${filteredMessages.length} memories successfully delivered`}
+                            </p>
                         </div>
-                    )}
-                </div>
+
+                        {/* Messages Timeline */}
+                        {filteredMessages.length === 0 ? (
+                            <div className="empty-vault">
+                                <span className="material-symbols-outlined">hourglass_empty</span>
+                                <p>No messages in this constellation</p>
+                            </div>
+                        ) : (
+                            <div className="messages-timeline">
+                                {filteredMessages.map((message, index) => {
+                                    // Calculate time difference from previous message
+                                    let spacing = 0
+                                    if (index > 0) {
+                                        const prev = new Date(filteredMessages[index - 1].scheduled_date)
+                                        const curr = new Date(message.scheduled_date)
+                                        const diffHours = Math.abs(curr - prev) / (1000 * 60 * 60)
+
+                                        // Dynamic spacing scale
+                                        if (diffHours < 24) spacing = 0 // Same day/close: standard gap
+                                        else if (diffHours < 24 * 7) spacing = 4 // Within week: medium gap
+                                        else if (diffHours < 24 * 30) spacing = 8 // Within month: large gap
+                                        else spacing = 12 // Long time: huge gap
+                                    }
+
+                                    return (
+                                        <MessageCard
+                                            key={message.id}
+                                            message={message}
+                                            index={index}
+                                            getTimeUntil={getTimeUntil}
+                                            filter={filter}
+                                            spacing={spacing}
+                                        />
+                                    )
+                                })}
+                            </div>
+                        )}
+                    </div>
+                </main>
+
+                {/* Right Sidebar - Memory Lane */}
+                <aside className="vault-sidebar-right">
+                    <div className="memory-lane-header">
+                        <h3>Memory Lane</h3>
+                        <div className="memory-lane-actions">
+                            <button className="memory-action-btn">
+                                <span className="material-symbols-outlined">search</span>
+                            </button>
+                            <button className="memory-action-btn">
+                                <span className="material-symbols-outlined">filter_list</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div className="memory-lane-content">
+                        {/* Sent Section */}
+                        {sentMessages.length > 0 && (
+                            <>
+                                <div className="memory-section-divider">
+                                    <span>Recently Sent</span>
+                                </div>
+                                {sentMessages.slice(0, 2).map(msg => (
+                                    <div key={msg.id} className="memory-lane-item sent">
+                                        <div className="memory-indicator"></div>
+                                        <div className="memory-lane-meta">
+                                            <span className="memory-from">To: {msg.recipient_email}</span>
+                                            <span className="memory-time">Sent {formatDistanceToNow(new Date(msg.sent_at || msg.scheduled_date), { addSuffix: true })}</span>
+                                        </div>
+                                        <h4 className="memory-lane-title">{msg.title || 'Untitled Memory'}</h4>
+                                        <p className="memory-lane-preview">{msg.decrypted_content?.substring(0, 60) || 'Delivered'}...</p>
+                                    </div>
+                                ))}
+                            </>
+                        )}
+
+                    </div>
+
+                    <div className="memory-lane-footer">
+                        <button className="view-full-journey-btn">View Full Journey</button>
+                    </div>
+                </aside>
             </div>
         </div>
     )
 }
 
-const MessageCard = ({ message, status }) => {
-    const preview = message.content?.substring(0, 80) + (message.content?.length > 80 ? '...' : '')
-    const dateFormatted = format(new Date(message.scheduled_date), 'PPp')
+
+
+const MessageCard = ({ message, index, getTimeUntil, filter, spacing = 0 }) => {
+    const isLeft = index % 2 === 0
+    const animationDelay = `${(index % 3) * 0.5}s`
+
+    const cardType = message.status === 'sent' ? 'sent' : 'in-transit'
+    const timeText = cardType === 'in-transit'
+        ? getTimeUntil(message.scheduled_date)
+        : `Sent ${format(new Date(message.sent_at || message.scheduled_date), 'MMM d, yyyy')}`
 
     return (
-        <div className={`message-card ${status}`}>
-            <div className="message-card-header">
-                <span className={`status-badge ${status}`}>
-                    {status === 'scheduled' ? (
-                        <>
-                            <Clock size={14} />
-                            Scheduled
-                        </>
-                    ) : (
-                        <>
-                            <CheckCircle size={14} />
-                            Sent
-                        </>
-                    )}
-                </span>
-                <span className="message-date">{dateFormatted}</span>
+        <div
+            className={`message-card-wrapper ${isLeft ? 'left' : 'right'}`}
+            style={{
+                animationDelay,
+                ...(spacing > 0 ? { marginTop: `${spacing}rem` } : {})
+            }}
+        >
+            {/* Timeline Dot */}
+            <div className={`timeline-dot ${cardType}`}>
+                <div className="dot-inner"></div>
             </div>
 
-            <div className="message-card-body">
-                <div className="message-recipient">
-                    <Mail size={16} />
-                    <span>{message.recipient_email}</span>
-                </div>
+            {/* Connection Line */}
+            <div className="timeline-connector"></div>
 
-                {message.content && (
-                    <p className="message-preview">{preview}</p>
-                )}
+            {/* Date Label */}
+            <div className="timeline-date">
+                {format(new Date(message.scheduled_date), 'MMM d, yyyy')}
+            </div>
+
+            {/* Card */}
+            <div className="message-card">
+                <div className="card-glow"></div>
+                <div className="card-content">
+                    <div className="card-header">
+                        <span className={`status-badge ${cardType}`}>
+                            {cardType === 'in-transit' ? 'Scheduled' : 'Delivered'}
+                        </span>
+                        <span className="material-symbols-outlined card-icon">
+                            {cardType === 'in-transit' ? 'schedule_send' : 'mark_email_read'}
+                        </span>
+                    </div>
+
+                    <h3 className="card-title">{message.title || 'Untitled Memory'}</h3>
+                    <p className="card-preview">
+                        {cardType === 'sent' && message.decrypted_content
+                            ? message.decrypted_content.substring(0, 80) + '...'
+                            : 'Content sealed until delivery'}
+                    </p>
+
+                    <div className="card-footer">
+                        <div className="card-time-info">
+                            <p className="time-label">
+                                {cardType === 'in-transit' ? 'Arrives In' : 'Delivered'}
+                            </p>
+                            <p className={`time-value ${cardType}`}>{timeText}</p>
+                        </div>
+                        <button className="card-view-btn">
+                            <span className="material-symbols-outlined">visibility</span>
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     )

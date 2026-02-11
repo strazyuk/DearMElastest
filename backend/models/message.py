@@ -17,6 +17,7 @@ class MessageResponse(BaseModel):
     user_id: UUID
     recipient_email: str
     encrypted_content: str
+    decrypted_content: Optional[str] = None
     scheduled_date: datetime
     created_at: datetime
     updated_at: datetime

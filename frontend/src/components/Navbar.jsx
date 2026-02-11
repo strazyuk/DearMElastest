@@ -1,7 +1,8 @@
 import { Link } from 'react-router-dom'
-import { Lock, LogOut } from 'lucide-react'
+import { LogOut } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
 import './Navbar.css'
+import DearMELogo from './DearMELogo'
 
 const Navbar = () => {
     const { user, signOut } = useAuth()
@@ -18,8 +19,7 @@ const Navbar = () => {
         <nav className="navbar">
             <div className="navbar-container">
                 <Link to="/dashboard" className="navbar-brand">
-                    <Lock size={24} />
-                    <span>DearME</span>
+                    <DearMELogo className="navbar-logo-custom" />
                 </Link>
 
                 <div className="navbar-menu">
