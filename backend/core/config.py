@@ -1,5 +1,6 @@
 from pydantic_settings import BaseSettings
 from functools import lru_cache
+import os
 
 
 class Settings(BaseSettings):
@@ -21,7 +22,9 @@ class Settings(BaseSettings):
     API_PORT: int = 8000
     
     model_config = {
-        "env_file": ".env",
+        "env_file": ".env" if os.path.exists(
+            os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '.env')
+        ) else None,
         "case_sensitive": True,
         "extra": "ignore"
     }
