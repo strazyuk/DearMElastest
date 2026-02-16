@@ -305,8 +305,8 @@ const MessageCard = ({ message, index, getTimeUntil, filter, spacing = 0 }) => {
 
                     <h3 className="card-title">{message.title || 'Untitled Memory'}</h3>
                     <p className="card-preview">
-                        {cardType === 'sent' && message.decrypted_content
-                            ? message.decrypted_content.substring(0, 80) + '...'
+                        {message.decrypted_content
+                            ? message.decrypted_content.substring(0, 80) + (message.decrypted_content.length > 80 ? '...' : '')
                             : 'Content sealed until delivery'}
                     </p>
 

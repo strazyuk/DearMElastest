@@ -57,18 +57,29 @@ async def get_messages(
     try:
         messages = await get_user_messages(
             user_id=current_user["user_id"],
+            email=current_user["email"],
             status=status_filter
         )
         
-        # For sent messages, include decrypted content
+        # Decrypt content for messages, but ONLY if they are 'sent' (delivered)
+        # Scheduled messages (in-transit) should not have their content revealed
         response_messages = []
         for msg in messages:
             msg_response = MessageResponse(**msg)
-            if msg.get("status") == "sent":
+            
+            # Additional check: If I am the recipient and status is 'scheduled', 
+            # maybe I shouldn't even see it? 
+            # For now, following the specific request: content only for delivered.
+            
+            if msg["status"] == "sent":
                 try:
                     msg_response.decrypted_content = decrypt_message(msg["encrypted_content"])
                 except Exception:
                     msg_response.decrypted_content = None
+            else:
+                # Content remains hidden for scheduled messages
+                msg_response.decrypted_content = None
+                
             response_messages.append(msg_response)
         
         return MessageListResponse(

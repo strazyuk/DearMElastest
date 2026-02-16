@@ -49,14 +49,11 @@ const LandingPage = () => {
                         <div className="hero-buttons">
                             <Link to="/auth" className="btn-primary">
                                 <span className="material-symbols-outlined">history_edu</span>
-                                Write to the Future
+                                Begin
                             </Link>
                         </div>
                     </div>
-                    <div className="scroll-indicator">
-                        <span className="scroll-text">Begin</span>
-                        <span className="material-symbols-outlined">keyboard_arrow_down</span>
-                    </div>
+
                 </section>
 
                 {/* Value Props Section */}

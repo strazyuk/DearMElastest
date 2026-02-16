@@ -1,6 +1,48 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2"
-import { Fernet } from "https://deno.land/x/fernet@0.2.0/mod.ts"
+
+// ---- Fernet decryption using Web Crypto API ----
+// Fernet key = base64url(signing_key[16] + encryption_key[16])
+// Fernet token = base64url(version[1] + timestamp[8] + iv[16] + ciphertext[n] + hmac[32])
+
+function base64urlToBytes(b64: string): Uint8Array {
+    // Fernet uses base64url encoding (RFC 4648 §5)
+    const std = b64.replace(/-/g, '+').replace(/_/g, '/')
+    const pad = std.length % 4 === 0 ? '' : '='.repeat(4 - (std.length % 4))
+    const binary = atob(std + pad)
+    return Uint8Array.from(binary, c => c.charCodeAt(0))
+}
+
+async function fernetDecrypt(key: string, token: string): Promise<string> {
+    const keyBytes = base64urlToBytes(key)
+    const signingKey = keyBytes.slice(0, 16)
+    const encryptionKey = keyBytes.slice(16, 32)
+
+    const tokenBytes = base64urlToBytes(token)
+    // version (1) + timestamp (8) + iv (16) + ciphertext (variable) + hmac (32)
+    const iv = tokenBytes.slice(9, 25)
+    const ciphertext = tokenBytes.slice(25, tokenBytes.length - 32)
+    const hmac = tokenBytes.slice(tokenBytes.length - 32)
+
+    // Verify HMAC-SHA256
+    const hmacKey = await crypto.subtle.importKey(
+        'raw', signingKey, { name: 'HMAC', hash: 'SHA-256' }, false, ['verify']
+    )
+    const dataToVerify = tokenBytes.slice(0, tokenBytes.length - 32)
+    const valid = await crypto.subtle.verify('HMAC', hmacKey, hmac, dataToVerify)
+    if (!valid) throw new Error('Fernet HMAC verification failed')
+
+    // Decrypt AES-128-CBC
+    const aesKey = await crypto.subtle.importKey(
+        'raw', encryptionKey, { name: 'AES-CBC' }, false, ['decrypt']
+    )
+    const decrypted = await crypto.subtle.decrypt(
+        { name: 'AES-CBC', iv }, aesKey, ciphertext
+    )
+
+    return new TextDecoder().decode(decrypted)
+}
+// ---- End Fernet implementation ----
 
 const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
@@ -29,9 +71,6 @@ serve(async (req) => {
         if (!ENCRYPTION_KEY) {
             throw new Error('ENCRYPTION_KEY is not configured')
         }
-
-        // Initialize Fernet with secret
-        const fernet = new Fernet(ENCRYPTION_KEY)
 
         // Get pending messages where scheduled_date has passed
         const { data: messages, error } = await supabase
@@ -62,7 +101,7 @@ serve(async (req) => {
         for (const msg of messages) {
             try {
                 // Decrypt the message content
-                const decryptedContent = fernet.decrypt(msg.encrypted_content)
+                const decryptedContent = await fernetDecrypt(ENCRYPTION_KEY, msg.encrypted_content)
                 const sentDate = new Date(msg.scheduled_date).toLocaleString('en-US', {
                     dateStyle: 'full',
                     timeStyle: 'short'

@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Request, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-from routers import messages
+from routers import messages, quote
 from core.config import get_settings
 import os
 
@@ -43,6 +43,7 @@ async def global_exception_handler(request: Request, exc: Exception):
 
 # Include routers
 app.include_router(messages.router)
+app.include_router(quote.router)
 
 
 # Health check endpoint

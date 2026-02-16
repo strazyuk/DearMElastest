@@ -14,8 +14,19 @@ const Auth = () => {
     const [error, setError] = useState('')
     const [showPassword, setShowPassword] = useState(false)
 
-    const { signIn, signUp } = useAuth()
+    const { signIn, signUp, signInWithGoogle } = useAuth()
     const navigate = useNavigate()
+
+    const handleGoogleSignIn = async () => {
+        try {
+            setError('')
+            setLoading(true)
+            await signInWithGoogle()
+        } catch (err) {
+            setError(err.message || 'Failed to sign in with Google')
+            setLoading(false)
+        }
+    }
 
     const handleSubmit = async (e) => {
         e.preventDefault()
@@ -163,6 +174,24 @@ const Auth = () => {
                                     {!loading && (
                                         <span className="material-symbols-outlined btn-arrow">arrow_forward</span>
                                     )}
+                                </button>
+
+                                <div className="auth-divider">or</div>
+
+                                <button
+                                    type="button"
+                                    onClick={handleGoogleSignIn}
+                                    className="btn-google"
+                                    disabled={loading}
+                                >
+                                    <img
+                                        src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+                                        alt="Google"
+                                        className="google-icon"
+                                    />
+                                    <span>
+                                        {isSignUp ? 'Sign up with Google' : 'Sign in with Google'}
+                                    </span>
                                 </button>
 
                                 {/* Toggle Links */}

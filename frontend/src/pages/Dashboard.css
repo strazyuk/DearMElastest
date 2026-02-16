@@ -1055,3 +1055,45 @@
         border-top: 1px solid rgba(255, 255, 255, 0.1);
     }
 }
+/* ===== Dashboard Container with Quote Sidebar ===== */
+.dashboard-container {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 0;
+    height: 100%;
+}
+
+.dashboard-quote-sidebar {
+    padding: 2rem 1.5rem;
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(48px);
+    -webkit-backdrop-filter: blur(48px);
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+    overflow-y: auto;
+}
+
+.dark .dashboard-quote-sidebar {
+    background: rgba(26, 15, 46, 0.8);
+}
+
+.dashboard-quote-sidebar::-webkit-scrollbar {
+    display: none;
+}
+
+.dashboard-quote-sidebar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+@media (max-width: 1024px) {
+    .dashboard-container {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto 1fr;
+    }
+    
+    .dashboard-quote-sidebar {
+        border-right: none;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 1rem;
+    }
+}

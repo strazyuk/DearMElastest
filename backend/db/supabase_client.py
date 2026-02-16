@@ -45,18 +45,20 @@ async def insert_message(
     return response.data[0]
 
 
-async def get_user_messages(user_id: str, status: Optional[str] = None) -> list[dict]:
+async def get_user_messages(user_id: str, email: str, status: Optional[str] = None) -> list[dict]:
     """
-    Get all messages for a user
+    Get all messages for a user (sent by them or received by them)
     
     Args:
         user_id: UUID of the user
+        email: Email of the user (to check for received messages)
         status: Optional filter by message status
         
     Returns:
         List of message records
     """
-    query = supabase.table("messages").select("*").eq("user_id", user_id)
+    # Using or_ filter to get messages where user is sender OR recipient
+    query = supabase.table("messages").select("*").or_(f"user_id.eq.{user_id},recipient_email.eq.{email}")
     
     if status:
         query = query.eq("status", status)

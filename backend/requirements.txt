@@ -8,3 +8,4 @@ python-dotenv
 PyJWT
 python-multipart
 email-validator
+google-generativeai

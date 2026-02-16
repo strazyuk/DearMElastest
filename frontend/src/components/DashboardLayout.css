@@ -75,10 +75,51 @@
 }
 
 /* Content Area */
+/* Content Area */
 .dashboard-content {
     flex: 1;
-    display: flex;
-    flex-direction: column;
     overflow: hidden;
     position: relative;
+    padding: 1.5rem;
+}
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    /* Sidebar on left, main content takes remaining space */
+    gap: 1.5rem;
+    height: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.main-panel {
+    overflow-y: auto;
+    /* Hide scrollbar but allow scrolling */
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
+}
+
+.main-panel::-webkit-scrollbar {
+    display: none;
+}
+
+.side-panel {
+    display: flex;
+    flex-direction: column;
+}
+
+@media (max-width: 1024px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+        grid-template-rows: 1fr auto;
+    }
+
+    .side-panel {
+        display: none;
+        /* Hide on mobile/tablet for now or move to bottom if requested */
+    }
 }
