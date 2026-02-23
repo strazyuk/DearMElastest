@@ -1,5 +1,5 @@
 .dashboard-layout {
-    min-height: 100vh;
+    height: 100vh;
     display: flex;
     flex-direction: column;
     background: var(--background-light);
@@ -80,7 +80,6 @@
     flex: 1;
     overflow: hidden;
     position: relative;
-    padding: 1.5rem;
 }
 
 .dashboard-grid {

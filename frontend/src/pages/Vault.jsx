@@ -212,47 +212,7 @@ const Vault = () => {
                     </div>
                 </main>
 
-                {/* Right Sidebar - Memory Lane */}
-                <aside className="vault-sidebar-right">
-                    <div className="memory-lane-header">
-                        <h3>Memory Lane</h3>
-                        <div className="memory-lane-actions">
-                            <button className="memory-action-btn">
-                                <span className="material-symbols-outlined">search</span>
-                            </button>
-                            <button className="memory-action-btn">
-                                <span className="material-symbols-outlined">filter_list</span>
-                            </button>
-                        </div>
-                    </div>
-
-                    <div className="memory-lane-content">
-                        {/* Sent Section */}
-                        {sentMessages.length > 0 && (
-                            <>
-                                <div className="memory-section-divider">
-                                    <span>Recently Sent</span>
-                                </div>
-                                {sentMessages.slice(0, 2).map(msg => (
-                                    <div key={msg.id} className="memory-lane-item sent">
-                                        <div className="memory-indicator"></div>
-                                        <div className="memory-lane-meta">
-                                            <span className="memory-from">To: {msg.recipient_email}</span>
-                                            <span className="memory-time">Sent {formatDistanceToNow(new Date(msg.sent_at || msg.scheduled_date), { addSuffix: true })}</span>
-                                        </div>
-                                        <h4 className="memory-lane-title">{msg.title || 'Untitled Memory'}</h4>
-                                        <p className="memory-lane-preview">{msg.decrypted_content?.substring(0, 60) || 'Delivered'}...</p>
-                                    </div>
-                                ))}
-                            </>
-                        )}
-
-                    </div>
-
-                    <div className="memory-lane-footer">
-                        <button className="view-full-journey-btn">View Full Journey</button>
-                    </div>
-                </aside>
+                {/* Right Sidebar removed */}
             </div>
         </div>
     )

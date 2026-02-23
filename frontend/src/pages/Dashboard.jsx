@@ -13,6 +13,9 @@ const Dashboard = () => {
     const [messageContent, setMessageContent] = useState('')
     const [recipientEmail, setRecipientEmail] = useState('')
     const [scheduledDate, setScheduledDate] = useState('')
+    const [selectedHour, setSelectedHour] = useState(12)
+    const [selectedMinute, setSelectedMinute] = useState(0)
+    const [selectedSecond, setSelectedSecond] = useState(0)
     const [isToSelf, setIsToSelf] = useState(true)
     const [dreamMode, setDreamMode] = useState(false)
     const [loading, setLoading] = useState(false)
@@ -42,6 +45,9 @@ const Dashboard = () => {
             if (!isToSelf) setRecipientEmail('')
             setScheduledDate('')
             setSelectedDate(null)
+            setSelectedHour(12)
+            setSelectedMinute(0)
+            setSelectedSecond(0)
         } catch (error) {
             setToast({
                 type: 'error',
@@ -62,12 +68,30 @@ const Dashboard = () => {
         return { firstDay, daysInMonth }
     }
 
+    const buildScheduledDate = (date, hour, minute, second) => {
+        if (!date) return ''
+        const d = new Date(date)
+        d.setHours(hour, minute, second, 0)
+        return format(d, "yyyy-MM-dd'T'HH:mm:ss")
+    }
+
     const handleDateSelect = (day) => {
         const year = currentMonth.getFullYear()
         const month = currentMonth.getMonth()
         const date = new Date(year, month, day)
         setSelectedDate(date)
-        setScheduledDate(format(date, "yyyy-MM-dd'T'12:00"))
+        setScheduledDate(buildScheduledDate(date, selectedHour, selectedMinute, selectedSecond))
+    }
+
+    const handleTimeChange = (type, value) => {
+        const num = parseInt(value, 10)
+        let h = selectedHour, m = selectedMinute, s = selectedSecond
+        if (type === 'hour') { h = num; setSelectedHour(num) }
+        if (type === 'minute') { m = num; setSelectedMinute(num) }
+        if (type === 'second') { s = num; setSelectedSecond(num) }
+        if (selectedDate) {
+            setScheduledDate(buildScheduledDate(selectedDate, h, m, s))
+        }
     }
 
     const { firstDay, daysInMonth } = getDaysInMonth(currentMonth)
@@ -264,6 +288,54 @@ const Dashboard = () => {
                                         })}
                                     </div>
                                 </div>
+
+                                {/* Time Picker */}
+                                <div className="time-picker-section">
+                                    <div className="time-picker-label">
+                                        <span className="material-symbols-outlined">schedule</span>
+                                        <span>Set Time</span>
+                                    </div>
+                                    <div className="time-picker-controls">
+                                        <div className="time-unit">
+                                            <label>HR</label>
+                                            <select
+                                                value={selectedHour}
+                                                onChange={(e) => handleTimeChange('hour', e.target.value)}
+                                                disabled={loading}
+                                            >
+                                                {Array.from({ length: 24 }, (_, i) => (
+                                                    <option key={i} value={i}>{String(i).padStart(2, '0')}</option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                        <span className="time-separator">:</span>
+                                        <div className="time-unit">
+                                            <label>MIN</label>
+                                            <select
+                                                value={selectedMinute}
+                                                onChange={(e) => handleTimeChange('minute', e.target.value)}
+                                                disabled={loading}
+                                            >
+                                                {Array.from({ length: 60 }, (_, i) => (
+                                                    <option key={i} value={i}>{String(i).padStart(2, '0')}</option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                        <span className="time-separator">:</span>
+                                        <div className="time-unit">
+                                            <label>SEC</label>
+                                            <select
+                                                value={selectedSecond}
+                                                onChange={(e) => handleTimeChange('second', e.target.value)}
+                                                disabled={loading}
+                                            >
+                                                {Array.from({ length: 60 }, (_, i) => (
+                                                    <option key={i} value={i}>{String(i).padStart(2, '0')}</option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
 
                             <div className="section-divider"></div>
@@ -283,7 +355,9 @@ const Dashboard = () => {
                                 <div className="summary-row">
                                     <span>Manifestation Date</span>
                                     <span className="summary-value">
-                                        {selectedDate ? format(selectedDate, 'MMM d, yyyy') : 'Not set'}
+                                        {selectedDate
+                                            ? `${format(selectedDate, 'MMM d, yyyy')} at ${String(selectedHour).padStart(2, '0')}:${String(selectedMinute).padStart(2, '0')}:${String(selectedSecond).padStart(2, '0')}`
+                                            : 'Not set'}
                                     </span>
                                 </div>
                             </div>
