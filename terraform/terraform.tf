@@ -8,6 +8,12 @@ data "external" "lambda_package" {
 # --- 2. Provider Configuration ---
 provider "aws" {
   region = var.aws_region
+  
+  default_tags {
+    tags = {
+      Project = "DearME"
+    }
+  }
 }
 
 # --- 3. Variables ---
@@ -80,12 +86,38 @@ resource "aws_ssm_parameter" "encryption_key" {
   value = var.encryption_key
 }
 
+resource "aws_budgets_budget" "monthly_budget" {
+  name              = "monthly-budget-dearme"
+  budget_type       = "COST"
+  limit_amount      = "5.0"
+  limit_unit        = "USD"
+  time_unit         = "MONTHLY"
+  time_period_start = "2024-01-01_00:00"
+
+  cost_filter {
+    name = "TagKeyValue"
+    values = [
+      "user:Project$DearME"
+    ]
+  }
+
+  notification {
+    comparison_operator = "GREATER_THAN"
+    threshold          = 80
+    threshold_type     = "PERCENTAGE"
+    notification_type  = "ACTUAL"
+    subscriber_email_addresses = ["asirabrar789@gmail.com"]
+  }
+}
+
 # --- 6. Lambda Function ---
 resource "aws_lambda_function" "api" {
   function_name = "dearme-api"
   role          = aws_iam_role.lambda_exec.arn
   handler       = "main.handler"
   runtime       = "python3.11"
+  memory_size   = 512
+  timeout       = 30
 
   # These values now come dynamically from the packaging script!
   filename         = data.external.lambda_package.result.zip_path
@@ -138,7 +170,7 @@ resource "aws_lambda_permission" "api_gw" {
   source_arn    = "${aws_apigatewayv2_api.http_api.execution_arn}/*/*"
 }
 
-# --- 8. Outputs ---
+# --- 9. Outputs ---
 output "api_url" {
   value = aws_apigatewayv2_api.http_api.api_endpoint
 }
