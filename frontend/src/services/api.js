@@ -44,7 +44,7 @@ apiClient.interceptors.response.use(
 )
 
 // API methods
-export const api = {
+const api = {
     // Create a new encrypted message
     async createMessage(recipientEmail, content, scheduledDate) {
         // Convert local datetime to ISO string with timezone
