@@ -2,6 +2,7 @@ import axios from 'axios'
 import { supabase } from './supabaseClient'
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+console.log('Using API Base URL:', API_URL)
 
 // Create axios instance with base configuration
 const apiClient = axios.create({

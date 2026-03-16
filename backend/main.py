@@ -3,10 +3,12 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from routers import messages, quote
 from core.config import get_settings
+from mangum import Mangum
 import os
 
 
 settings = get_settings()
+
 
 # Initialize FastAPI application
 app = FastAPI(
@@ -72,11 +74,5 @@ async def root():
     }
 
 
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(
-        "main:app",
-        host=settings.API_HOST,
-        port=settings.API_PORT,
-        reload=True
-    )
+# Wrap the app for Lambda
+handler = Mangum(app)

@@ -55,9 +55,3 @@ graph TD
 - [x] Automated delivery worker (Edge Function)
 - [/] **AWS Migration Research** (In Progress)
 
-## ☁️ Future AWS Architecture (Proposed)
-The project is currently evaluating a migration to AWS for enhanced control and potentially lower costs:
-- **Compute**: AWS App Runner (API) + AWS Lambda (Workers)
-- **Database**: Amazon RDS (PostgreSQL)
-- **Frontend**: AWS Amplify or S3+CloudFront
-- **Secrets**: AWS Secrets Manager
