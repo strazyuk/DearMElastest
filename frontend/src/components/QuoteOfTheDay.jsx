@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import './QuoteOfTheDay.css'
+import api, { apiClient } from '../services/api'
 
 const QuoteOfTheDay = () => {
     const [quoteData, setQuoteData] = useState(null)
@@ -21,12 +22,10 @@ const QuoteOfTheDay = () => {
 
             try {
                 console.log('Fetching quote from API...')
-                const response = await fetch('http://localhost:8000/api/quote/')
+                const response = await apiClient.get('/api/quote/')
                 console.log('API Response status:', response.status)
 
-                if (!response.ok) throw new Error('Failed to fetch quote')
-
-                const data = await response.json()
+                const data = response.data
                 const dataWithDate = { ...data, date: today }
 
                 localStorage.setItem('daily_quote', JSON.stringify(dataWithDate))

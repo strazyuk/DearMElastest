@@ -1,7 +1,12 @@
 import axios from 'axios'
 import { supabase } from './supabaseClient'
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+// Fail-safe API URL detection: Use production URL if not on localhost
+const API_URL = import.meta.env.VITE_API_URL || 
+                (typeof window !== 'undefined' && window.location.hostname === 'localhost' 
+                    ? 'http://localhost:8000' 
+                    : 'https://wo7z2tu39l.execute-api.ap-south-1.amazonaws.com')
+
 console.log('Using API Base URL:', API_URL)
 
 // Create axios instance with base configuration
@@ -68,4 +73,5 @@ export const api = {
     },
 }
 
+export { apiClient, api }
 export default api
