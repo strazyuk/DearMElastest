@@ -12,6 +12,7 @@ DROP TABLE IF EXISTS messages CASCADE;
 CREATE TABLE messages (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  title VARCHAR(255),
   recipient_email VARCHAR(255) NOT NULL,
   encrypted_content TEXT NOT NULL,
   scheduled_date TIMESTAMPTZ NOT NULL,

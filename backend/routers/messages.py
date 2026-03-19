@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status, Query
 from typing import Optional
 from models.message import MessageCreate, MessageResponse, MessageListResponse
 from core.security import get_current_user, encrypt_message, decrypt_message
-from db.supabase_client import insert_message, get_user_messages, get_message_by_id
+from db.supabase_client import insert_message, get_user_messages, get_message_by_id, delete_message
 
 
 router = APIRouter(prefix="/api/messages", tags=["messages"])
@@ -27,6 +27,7 @@ async def create_message(
         # Insert into database
         created_message = await insert_message(
             user_id=current_user["user_id"],
+            title=message.title,
             recipient_email=message.recipient_email,
             encrypted_content=encrypted_content,
             scheduled_date=message.scheduled_date
@@ -67,17 +68,14 @@ async def get_messages(
         for msg in messages:
             msg_response = MessageResponse(**msg)
             
-            # Additional check: If I am the recipient and status is 'scheduled', 
-            # maybe I shouldn't even see it? 
-            # For now, following the specific request: content only for delivered.
-            
             if msg["status"] == "sent":
                 try:
                     msg_response.decrypted_content = decrypt_message(msg["encrypted_content"])
-                except Exception:
+                except Exception as decrypt_err:
+                    # Log the error but return None so frontend shows a graceful message
+                    print(f"[DECRYPT ERROR] Message {msg.get('id')}: {decrypt_err}")
                     msg_response.decrypted_content = None
             else:
-                # Content remains hidden for scheduled messages
                 msg_response.decrypted_content = None
                 
             response_messages.append(msg_response)
@@ -115,3 +113,24 @@ async def get_message(
         )
     
     return MessageResponse(**message)
+
+
+@router.delete("/{message_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_message_by_id(
+    message_id: str,
+    current_user: dict = Depends(get_current_user)
+):
+    """
+    Delete a specific message by ID
+
+    - Requires authentication via Bearer token
+    - Only the message owner can delete it
+    - Returns 204 on success, 404 if not found
+    """
+    deleted = await delete_message(message_id, current_user["user_id"])
+
+    if not deleted:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Message not found or access denied"
+        )

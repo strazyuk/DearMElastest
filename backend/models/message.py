@@ -6,6 +6,7 @@ from uuid import UUID
 
 class MessageCreate(BaseModel):
     """Schema for creating a new message"""
+    title: Optional[str] = Field(None, max_length=255)
     recipient_email: EmailStr
     content: str = Field(..., min_length=1, max_length=10000)
     scheduled_date: datetime
@@ -15,6 +16,7 @@ class MessageResponse(BaseModel):
     """Schema for message response"""
     id: UUID
     user_id: UUID
+    title: Optional[str] = None
     recipient_email: str
     encrypted_content: str
     decrypted_content: Optional[str] = None

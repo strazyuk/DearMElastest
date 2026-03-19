@@ -12,6 +12,7 @@ supabase: Client = create_client(settings.SUPABASE_URL, settings.SUPABASE_SERVIC
 
 async def insert_message(
     user_id: str,
+    title: Optional[str],
     recipient_email: str,
     encrypted_content: str,
     scheduled_date: datetime
@@ -33,6 +34,7 @@ async def insert_message(
     """
     response = supabase.table("messages").insert({
         "user_id": user_id,
+        "title": title,
         "recipient_email": recipient_email,
         "encrypted_content": encrypted_content,
         "scheduled_date": scheduled_date.isoformat(),
@@ -82,3 +84,23 @@ async def get_message_by_id(message_id: str, user_id: str) -> Optional[dict]:
     response = supabase.table("messages").select("*").eq("id", message_id).eq("user_id", user_id).execute()
     
     return response.data[0] if response.data else None
+
+
+async def delete_message(message_id: str, user_id: str) -> bool:
+    """
+    Delete a specific message, ensuring it belongs to the user.
+
+    Args:
+        message_id: UUID of the message to delete
+        user_id: UUID of the user requesting deletion
+
+    Returns:
+        True if deleted, False if message not found or not owned by user
+    """
+    # First verify the message belongs to this user
+    response = supabase.table("messages").select("id").eq("id", message_id).eq("user_id", user_id).execute()
+    if not response.data:
+        return False
+
+    supabase.table("messages").delete().eq("id", message_id).execute()
+    return True

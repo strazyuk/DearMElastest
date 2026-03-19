@@ -107,17 +107,17 @@ serve(async (req) => {
                 })
 
                 const emailHtml = `
-            <div style="font-family: sans-serif; max-width: 600px; margin: auto; padding: 32px; background: #fafafa; border-radius: 12px; border: 1px solid #e2e8f0;">
-              <h1 style="background: linear-gradient(to right, #a855f7, #ec4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-size: 28px; margin-bottom: 8px;">
-                DearME 💌
+            <div style="font-family: 'Times New Roman', Times, serif; max-width: 600px; margin: auto; padding: 40px; background: #0e0e0e; border-radius: 4px; border: 1px solid #2a2a2a; color: #f5f0ea;">
+              <h1 style="font-size: 28px; font-weight: normal; margin-bottom: 8px; color: #c9a87c;">
+                ${msg.title || 'DearME 💌'}
               </h1>
-              <p style="color: #64748b; font-size: 14px; margin-bottom: 24px;">Scheduled for: ${scheduledDate}</p>
+              <p style="color: #a39e99; font-size: 14px; margin-bottom: 32px; letter-spacing: 0.05em; text-transform: uppercase;">Scheduled for: ${scheduledDate}</p>
               
-              <div style="background: white; padding: 24px; border-radius: 8px; border-left: 4px solid #a855f7; color: #1e293b; font-size: 16px; line-height: 1.6; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+              <div style="background: #181818; padding: 32px; border-radius: 4px; border-left: 2px solid #555; color: #f5f0ea; font-size: 16px; line-height: 1.8; font-family: sans-serif;">
                 ${decryptedContent}
               </div>
               
-              <p style="color: #94a3b8; font-size: 12px; margin-top: 32px; text-align: center; font-style: italic;">
+              <p style="color: #a39e99; font-size: 12px; margin-top: 40px; text-align: center; font-style: italic;">
                 Sent with love from your past self 🕊️
               </p>
             </div>
@@ -126,7 +126,7 @@ serve(async (req) => {
                 await client.send({
                     from: `DearME <${GMAIL_USER}>`,
                     to: msg.recipient_email,
-                    subject: '📬 A message from your past self',
+                    subject: msg.title || '📬 A message from your past self',
                     content: [
                         {
                             type: 'text/html; charset=utf-8',

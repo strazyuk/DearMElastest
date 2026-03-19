@@ -1,35 +1,24 @@
 .dashboard-layout {
-    height: 100vh;
     display: flex;
     flex-direction: column;
-    background: var(--background-light);
-    font-family: "Space Grotesk", sans-serif;
-    overflow: hidden;
+    min-height: 100vh;
+    background: var(--background);
 }
 
-.dark .dashboard-layout {
-    background: var(--background-dark);
-    color: white;
-}
-
-/* Header Styles moved from Dashboard.css */
+/* Header Styles */
 .dashboard-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 1rem 1.5rem;
-    background: rgba(255, 255, 255, 0.6);
-    backdrop-filter: blur(48px);
-    -webkit-backdrop-filter: blur(48px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    position: sticky;
+    background: rgba(14, 14, 14, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    position: fixed;
+    width: 100%;
     top: 0;
-    z-index: 50;
-}
-
-.dark .dashboard-header {
-    background: rgba(19, 9, 28, 0.6);
-    border-bottom-color: rgba(255, 255, 255, 0.05);
+    z-index: 100;
 }
 
 .header-logo .dashboard-logo-custom {
@@ -49,76 +38,24 @@
     gap: 0.5rem;
     height: 2.5rem;
     padding: 0 1rem;
-    background: rgba(255, 255, 255, 0.5);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 0.75rem;
+    background: transparent;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
     font-size: 0.875rem;
     font-weight: 500;
-    color: #1e293b;
+    color: var(--text-color);
     cursor: pointer;
     transition: all 0.2s;
-    text-decoration: none;
-}
-
-.dark .header-btn {
-    background: rgba(255, 255, 255, 0.05);
-    color: #cbd5e1;
 }
 
 .header-btn:hover {
-    background: rgba(255, 255, 255, 0.8);
-    transform: scale(1.05);
+    background: rgba(255, 255, 255, 0.05);
+    border-color: var(--text-secondary);
 }
 
-.dark .header-btn:hover {
-    background: rgba(255, 255, 255, 0.1);
-}
-
-/* Content Area */
 /* Content Area */
 .dashboard-content {
     flex: 1;
-    overflow: hidden;
-    position: relative;
-}
-
-.dashboard-grid {
-    display: grid;
-    grid-template-columns: 320px 1fr;
-    /* Sidebar on left, main content takes remaining space */
-    gap: 1.5rem;
-    height: 100%;
-    max-width: 1400px;
-    margin: 0 auto;
-    width: 100%;
-}
-
-.main-panel {
-    overflow-y: auto;
-    /* Hide scrollbar but allow scrolling */
-    -ms-overflow-style: none;
-    /* IE and Edge */
-    scrollbar-width: none;
-    /* Firefox */
-}
-
-.main-panel::-webkit-scrollbar {
-    display: none;
-}
-
-.side-panel {
     display: flex;
     flex-direction: column;
-}
-
-@media (max-width: 1024px) {
-    .dashboard-grid {
-        grid-template-columns: 1fr;
-        grid-template-rows: 1fr auto;
-    }
-
-    .side-panel {
-        display: none;
-        /* Hide on mobile/tablet for now or move to bottom if requested */
-    }
 }

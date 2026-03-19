@@ -4,16 +4,12 @@ import DearMELogo from '../components/DearMELogo'
 
 const LandingPage = () => {
     return (
-        <div className="landing-root aurora-bg">
-            {/* Starfield particles */}
-            <div className="starfield">
-                <div className="star star-1"></div>
-                <div className="star star-2"></div>
-                <div className="star star-3"></div>
-            </div>
+        <div className="landing-root">
+            {/* Grain Noise Overlay */}
+            <div className="noise-overlay"></div>
 
             {/* Navigation */}
-            <header className="landing-nav">
+            <header className="landing-nav fade-in">
                 <div className="nav-logo">
                     <DearMELogo className="nav-logo-custom" />
                 </div>
@@ -23,31 +19,26 @@ const LandingPage = () => {
                     <a href="#about">Our Promise</a>
                     <Link to="/auth" className="nav-signin-btn">Sign In</Link>
                 </div>
-                <button className="mobile-menu-btn">
-                    <span className="material-symbols-outlined">menu</span>
-                </button>
             </header>
 
             <main>
                 {/* Hero Section */}
                 <section className="hero-section">
-                    <div className="hero-bg-image"></div>
-                    <div className="hero-overlay"></div>
-                    <div className="hero-content">
-                        <div className="hero-badge">
+                    <div className="hero-content slide-up">
+                        <div className="hero-badge fade-in" style={{ animationDelay: '0.2s' }}>
                             <span className="pulse-dot"></span>
                             Your Personal Time Capsule
                         </div>
-                        <h1 className="hero-title serif">
+                        <h1 className="hero-title serif fade-in" style={{ animationDelay: '0.4s' }}>
                             Whisper to the <br />
-                            <span className="text-gradient italic">Stars of Tomorrow</span>
+                            <span className="italic">Stars of Tomorrow</span>
                         </h1>
-                        <p className="hero-subtitle">
+                        <p className="hero-subtitle fade-in" style={{ animationDelay: '0.6s' }}>
                             Cast your hopes, dreams, and memories into the river of time.
                             We keep them safe until you meet them again.
                         </p>
-                        <div className="hero-buttons">
-                            <Link to="/auth" className="btn-primary">
+                        <div className="hero-buttons fade-in" style={{ animationDelay: '0.8s' }}>
+                            <Link to="/auth" className="btn btn-primary">
                                 <span className="material-symbols-outlined">history_edu</span>
                                 Begin
                             </Link>
@@ -60,21 +51,21 @@ const LandingPage = () => {
                 <section className="values-section">
                     <div className="values-grid">
                         <div className="value-item group">
-                            <div className="value-icon purple">
+                            <div className="value-icon">
                                 <span className="material-symbols-outlined">spa</span>
                             </div>
                             <h3 className="serif">Peace of Mind</h3>
                             <p>Release your burdens and dreams. Knowing they are safe brings a quiet calm to the present moment.</p>
                         </div>
                         <div className="value-item group">
-                            <div className="value-icon indigo">
+                            <div className="value-icon">
                                 <span className="material-symbols-outlined">lock</span>
                             </div>
                             <h3 className="serif">Sealed in Time</h3>
                             <p>Your words are wrapped in a digital cocoon, unreachable by anyone—even us—until the moment you choose.</p>
                         </div>
                         <div className="value-item group">
-                            <div className="value-icon blue">
+                            <div className="value-icon">
                                 <span className="material-symbols-outlined">auto_awesome</span>
                             </div>
                             <h3 className="serif">A Gift to Yourself</h3>
@@ -85,32 +76,31 @@ const LandingPage = () => {
 
                 {/* How It Works */}
                 <section className="how-it-works" id="how-it-works">
-                    <div className="decorative-blob"></div>
                     <div className="section-container">
                         <div className="section-header centered">
                             <h2 className="serif italic">The Journey of a Thought</h2>
                             <p>Sending a message to the future is a simple, sacred act.</p>
                         </div>
                         <div className="steps-grid">
-                            <div className="glass-panel step-card">
+                            <div className="solid-panel step-card">
                                 <div className="step-number serif">1</div>
-                                <div className="step-icon purple">
+                                <div className="step-icon">
                                     <span className="material-symbols-outlined">flight</span>
                                 </div>
                                 <h3 className="serif">Reflect & Compose</h3>
                                 <p>Pour your heart out. Be honest, be raw, be hopeful. Attach a photo of the sunset, or a song that moves you today.</p>
                             </div>
-                            <div className="glass-panel step-card">
+                            <div className="solid-panel step-card">
                                 <div className="step-number serif">2</div>
-                                <div className="step-icon indigo">
+                                <div className="step-icon">
                                     <span className="material-symbols-outlined">hourglass_top</span>
                                 </div>
                                 <h3 className="serif">Set the Moment</h3>
                                 <p>Select a date when the time will be right. A birthday, an anniversary, or just a random Tuesday ten years from now.</p>
                             </div>
-                            <div className="glass-panel step-card">
+                            <div className="solid-panel step-card">
                                 <div className="step-number serif">3</div>
-                                <div className="step-icon blue">
+                                <div className="step-icon">
                                     <span className="material-symbols-outlined">mark_email_read</span>
                                 </div>
                                 <h3 className="serif">The Reunion</h3>
@@ -125,20 +115,10 @@ const LandingPage = () => {
                     <div className="section-container security-grid">
                         <div className="security-image">
                             <div className="image-wrapper">
-                                <div className="image-overlay"></div>
                                 <img
-                                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuBGO7SLmtuzLGoVtjtqPtqQecHLegLpH3EnuErkkYeU-5AQ5zevQQvWehZ2iWvVqI6yO56G77tnMueBYwrTxOqtTjTIR_-KejwKkBE96dXvBza9sK1xAuYkHLOdZeSzXwSTg4hmKbHxVjIlgpdFL2MzmRVvPdnKw7oIgfylndZOwI2ylqrgvRVjFHmzzeTUnh2Hn1R-Q9EhcF4H4AC-dFPVt7281n-X7CqUFBgXtw4cLvCbCEYDyuEN9KUOrpHpuoFScGmLwz70"
+                                    src="https://images.unsplash.com/photo-1518599904199-0ca897819ddb?auto=format&fit=crop&q=80&w=1000"
                                     alt="Ethereal landscape with mist"
                                 />
-                                <div className="glass-panel floating-shield">
-                                    <div className="shield-icon">
-                                        <span className="material-symbols-outlined">lock</span>
-                                    </div>
-                                    <div>
-                                        <p className="shield-title serif italic">Safely sealed away.</p>
-                                        <p className="shield-subtitle">Like a message in a bottle cast into a digital ocean, only you can uncork it when it washes ashore.</p>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                         <div className="security-content">
@@ -171,7 +151,6 @@ const LandingPage = () => {
 
                 {/* Testimonial */}
                 <section className="testimonial-section">
-                    <div className="testimonial-glow"></div>
                     <div className="testimonial-container">
                         <span className="material-symbols-outlined quote-icon">format_quote</span>
                         <h2 className="serif italic">
@@ -181,7 +160,7 @@ const LandingPage = () => {
                             <div className="author-avatar-wrapper">
                                 <div
                                     className="author-avatar"
-                                    style={{ backgroundImage: `url('https://lh3.googleusercontent.com/aida-public/AB6AXuBxFSBZuCJxeag_PRX7DQ_qli5cdU2Xxs0nUW24kFWqiuFHLJ5N6vlKCFt8UzazrMRyjv2BBGX0HQCS-MLxA3gjMTpe2AMlBOHg3osrtbRvrrNi_kvWqohWFfWQj8Elgw--jzv6SPY1ydtuht2N-cja0byUr30Ke-rS8OF9DdjPll_RduSb9rCL4FzqtdbIfRD28nh1XwoOUDDQNMf0mBzI_nu_bfHCHg5YnDj0T-gUYVlGt4BuAzH1iyzqHJzprsMRnzohwCPT')` }}
+                                    style={{ backgroundImage: `url('https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=150&q=80')` }}
                                 ></div>
                             </div>
                             <div>
@@ -194,10 +173,10 @@ const LandingPage = () => {
 
                 {/* CTA Section */}
                 <section className="cta-section">
-                    <div className="glass-panel cta-card">
+                    <div className="solid-panel cta-card">
                         <h2 className="serif">Leave a note for tomorrow.</h2>
                         <p>The person you will become is waiting to hear from who you are today. Create a bridge across time.</p>
-                        <Link to="/auth" className="btn-cta">
+                        <Link to="/auth" className="btn btn-primary cta-action-btn">
                             Begin Your Letter
                         </Link>
                         <p className="cta-note">Start for free • Secure forever</p>
@@ -212,7 +191,7 @@ const LandingPage = () => {
                         <div className="footer-logo">
                             <DearMELogo className="footer-logo-custom" />
                         </div>
-                        <p>An ethereal archive for your most precious thoughts, waiting patiently for the future.</p>
+                        <p>An archive for your most precious thoughts, waiting patiently for the future.</p>
                     </div>
                     <div className="footer-links">
                         <a href="#">Privacy</a>

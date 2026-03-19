@@ -46,13 +46,14 @@ apiClient.interceptors.response.use(
 // API methods
 const api = {
     // Create a new encrypted message
-    async createMessage(recipientEmail, content, scheduledDate) {
+    async createMessage(title, recipientEmail, content, scheduledDate) {
         // Convert local datetime to ISO string with timezone
         // scheduledDate comes as "2026-02-07T16:54" from datetime-local input
         const localDate = new Date(scheduledDate)
         const isoDate = localDate.toISOString()
 
         const response = await apiClient.post('/api/messages', {
+            title: title || null,
             recipient_email: recipientEmail,
             content,
             scheduled_date: isoDate,
@@ -70,6 +71,11 @@ const api = {
     async getMessage(messageId) {
         const response = await apiClient.get(`/api/messages/${messageId}`)
         return response.data
+    },
+
+    // Delete a message by ID (only works for messages you own/sent)
+    async deleteMessage(messageId) {
+        await apiClient.delete(`/api/messages/${messageId}`)
     },
 }
 

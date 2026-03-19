@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { format } from 'date-fns'
-import { useNavigate, Link } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import Toast from '../components/Toast'
 import LoadingSpinner from '../components/LoadingSpinner'
@@ -17,7 +17,6 @@ const Dashboard = () => {
     const [selectedMinute, setSelectedMinute] = useState(0)
     const [selectedSecond, setSelectedSecond] = useState(0)
     const [isToSelf, setIsToSelf] = useState(true)
-    const [dreamMode, setDreamMode] = useState(false)
     const [loading, setLoading] = useState(false)
     const [toast, setToast] = useState(null)
     const [selectedDate, setSelectedDate] = useState(null)
@@ -32,11 +31,11 @@ const Dashboard = () => {
 
         try {
             const email = isToSelf ? user?.email : recipientEmail
-            await api.createMessage(email, messageContent, scheduledDate)
+            await api.createMessage(title, email, messageContent, scheduledDate)
 
             setToast({
                 type: 'success',
-                message: 'Memory sealed and sent to the light! ✨',
+                message: 'Your memory has been sealed for the future.',
             })
 
             // Clear form
@@ -107,55 +106,16 @@ const Dashboard = () => {
     return (
         <div className="dashboard-root">
             <div className="dashboard-container">
+                {/* Desktop sidebar for quote */}
                 <aside className="dashboard-quote-sidebar">
                     <QuoteOfTheDay />
                 </aside>
+
                 <main className="dashboard-main">
                     {/* Writing Section */}
                     <section className="writing-section">
-                        {/* Background effects */}
-                        <div className="bg-noise"></div>
-                        <div className="bg-orb orb-1"></div>
-                        <div className="bg-orb orb-2"></div>
-
-                        {/* Dream Mode Overlay */}
-                        {dreamMode && (
-                            <div className="dream-overlay">
-                                <div className="sparkle" style={{ top: '20%', left: '25%' }}></div>
-                                <div className="sparkle" style={{ top: '75%', left: '33%', animationDelay: '1s' }}></div>
-                                <div className="sparkle" style={{ top: '50%', right: '25%', animationDelay: '2s' }}></div>
-                                <div className="sparkle" style={{ bottom: '25%', right: '33%', animationDelay: '0.5s' }}></div>
-                            </div>
-                        )}
-
                         {/* Content */}
-                        <div className="writing-content">
-                            {/* Icon */}
-                            <div className="content-icon float-element">
-                                <span className="material-symbols-outlined icon-main">hourglass_empty</span>
-                                <span className="material-symbols-outlined icon-accent">history_edu</span>
-                                <div className="icon-glow"></div>
-                            </div>
-
-                            {/* Formatting Toolbar */}
-                            <div className="formatting-toolbar">
-                                <button className="toolbar-btn" title="Bold">
-                                    <span className="material-symbols-outlined">format_bold</span>
-                                </button>
-                                <button className="toolbar-btn" title="Italic">
-                                    <span className="material-symbols-outlined">format_italic</span>
-                                </button>
-                                <button className="toolbar-btn" title="List">
-                                    <span className="material-symbols-outlined">format_list_bulleted</span>
-                                </button>
-                                <div className="toolbar-divider"></div>
-                                <button className="toolbar-btn" title="Image">
-                                    <span className="material-symbols-outlined">image</span>
-                                </button>
-                                <button className="toolbar-btn" title="Attach">
-                                    <span className="material-symbols-outlined">attach_file</span>
-                                </button>
-                            </div>
+                        <div className="writing-content slide-up">
 
                             {/* Title Input */}
                             <div className="title-input-wrapper">
@@ -163,8 +123,8 @@ const Dashboard = () => {
                                     type="text"
                                     value={title}
                                     onChange={(e) => setTitle(e.target.value)}
-                                    placeholder="What is this memory about?"
-                                    className="title-input"
+                                    placeholder="Title this memory..."
+                                    className="title-input serif"
                                     disabled={loading}
                                 />
                                 <div className="title-underline"></div>
@@ -172,11 +132,10 @@ const Dashboard = () => {
 
                             {/* Message Textarea */}
                             <div className="message-textarea-wrapper">
-                                <div className="paper-texture"></div>
                                 <textarea
                                     value={messageContent}
                                     onChange={(e) => setMessageContent(e.target.value)}
-                                    placeholder="Drift into your thoughts..."
+                                    placeholder="Write your thoughts..."
                                     className="message-textarea"
                                     disabled={loading}
                                     required
@@ -188,17 +147,17 @@ const Dashboard = () => {
                                 <span className="word-count">{wordCount} words written</span>
                                 <div className="save-status">
                                     <span className="material-symbols-outlined">cloud_done</span>
-                                    <span>Saved to stardust</span>
+                                    <span>Draft saved</span>
                                 </div>
                             </div>
                         </div>
                     </section>
 
-                    {/* Sidebar */}
+                    {/* Sidebar / Configuration */}
                     <aside className="dashboard-sidebar">
-                        <div className="sidebar-content">
+                        <div className="sidebar-content fade-in">
                             {/* Destination Section */}
-                            <div className="sidebar-section float-element" style={{ animationDelay: '0.5s' }}>
+                            <div className="sidebar-section">
                                 <h3 className="section-title">
                                     <span className="material-symbols-outlined">near_me</span>
                                     Destination
@@ -236,7 +195,7 @@ const Dashboard = () => {
                             <div className="section-divider"></div>
 
                             {/* Time Lock Section */}
-                            <div className="sidebar-section float-element" style={{ animationDelay: '1s' }}>
+                            <div className="sidebar-section">
                                 <h3 className="section-title">
                                     <span className="material-symbols-outlined">schedule</span>
                                     Time Lock
@@ -282,7 +241,6 @@ const Dashboard = () => {
                                                     onClick={() => !isPast && handleDateSelect(day)}
                                                 >
                                                     {day}
-                                                    {isSelected && <div className="selection-pulse"></div>}
                                                 </div>
                                             )
                                         })}
@@ -321,42 +279,19 @@ const Dashboard = () => {
                                                 ))}
                                             </select>
                                         </div>
-                                        <span className="time-separator">:</span>
-                                        <div className="time-unit">
-                                            <label>SEC</label>
-                                            <select
-                                                value={selectedSecond}
-                                                onChange={(e) => handleTimeChange('second', e.target.value)}
-                                                disabled={loading}
-                                            >
-                                                {Array.from({ length: 60 }, (_, i) => (
-                                                    <option key={i} value={i}>{String(i).padStart(2, '0')}</option>
-                                                ))}
-                                            </select>
-                                        </div>
                                     </div>
                                 </div>
                             </div>
-
-                            <div className="section-divider"></div>
-
-                            {/* Sanctuary / Dream Mode Section */}
-
-
                         </div>
 
                         {/* Send Button Footer */}
                         <div className="sidebar-footer">
                             <div className="summary-info">
                                 <div className="summary-row">
-                                    <span>Soul Travel Cost</span>
-                                    <span className="summary-value">Free</span>
-                                </div>
-                                <div className="summary-row">
-                                    <span>Manifestation Date</span>
+                                    <span>Delivery Date</span>
                                     <span className="summary-value">
                                         {selectedDate
-                                            ? `${format(selectedDate, 'MMM d, yyyy')} at ${String(selectedHour).padStart(2, '0')}:${String(selectedMinute).padStart(2, '0')}:${String(selectedSecond).padStart(2, '0')}`
+                                            ? `${format(selectedDate, 'MMM d, yyyy')} at ${String(selectedHour).padStart(2, '0')}:${String(selectedMinute).padStart(2, '0')}`
                                             : 'Not set'}
                                     </span>
                                 </div>
@@ -364,16 +299,15 @@ const Dashboard = () => {
                             <button
                                 onClick={handleSubmit}
                                 disabled={loading || !messageContent || !scheduledDate}
-                                className="send-button"
+                                className="btn btn-primary send-button"
                             >
-                                <div className="send-shimmer"></div>
                                 <div className="send-content">
                                     {loading ? (
                                         <LoadingSpinner />
                                     ) : (
                                         <>
-                                            <span className="material-symbols-outlined">rocket_launch</span>
-                                            <span className="send-text">Seal & Send to Light</span>
+                                            <span className="material-symbols-outlined">lock</span>
+                                            <span className="send-text">Seal & Send</span>
                                         </>
                                     )}
                                 </div>

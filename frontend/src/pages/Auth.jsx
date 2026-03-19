@@ -55,23 +55,20 @@ const Auth = () => {
     }
 
     return (
-        <div className="auth-container ethereal-bg">
-            {/* Ambient orbs */}
-            <div className="ambient-orb orb-1"></div>
-            <div className="ambient-orb orb-2"></div>
+        <div className="auth-container">
+            {/* Grain Noise Overlay */}
+            <div className="noise-overlay"></div>
 
             <main className="auth-main">
-                <div className="auth-card-wrapper">
-                    <div className="glass-card auth-card">
-                        {/* Top glow */}
-                        <div className="card-glow"></div>
+                <div className="auth-card-wrapper fade-in">
+                    <div className="auth-card solid-panel">
 
                         {/* Header */}
                         <div className="auth-header">
                             <div className="auth-icon-wrapper">
                                 <DearMELogo className="auth-logo-custom" />
                             </div>
-                            <h1 className="auth-title font-serif italic">DearME</h1>
+                            <h1 className="auth-title serif italic">DearME</h1>
                             <p className="auth-subtitle">
                                 {isSignUp
                                     ? 'Step into the river of time'
@@ -83,7 +80,7 @@ const Auth = () => {
                         <form onSubmit={handleSubmit} className="auth-form">
                             {/* Email Field */}
                             <div className="form-group">
-                                <label htmlFor="email" className="form-label">
+                                <label htmlFor="email" className="auth-form-label">
                                     Traveller
                                 </label>
                                 <div className="input-underline">
@@ -93,7 +90,7 @@ const Auth = () => {
                                         value={email}
                                         onChange={(e) => setEmail(e.target.value)}
                                         required
-                                        className="input-field"
+                                        className="auth-input-field"
                                         placeholder="Who are you?"
                                         disabled={loading}
                                     />
@@ -103,7 +100,7 @@ const Auth = () => {
 
                             {/* Password Field */}
                             <div className="form-group">
-                                <label htmlFor="password" className="form-label">
+                                <label htmlFor="password" className="auth-form-label">
                                     {isSignUp ? 'Choose Passphrase' : 'Passphrase'}
                                 </label>
                                 <div className="input-underline">
@@ -113,7 +110,7 @@ const Auth = () => {
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
                                         required
-                                        className="input-field"
+                                        className="auth-input-field"
                                         placeholder={isSignUp ? "Create your secret..." : "The secret word..."}
                                         minLength={6}
                                         disabled={loading}
@@ -133,7 +130,7 @@ const Auth = () => {
                             {/* Confirm Password Field - Only for Sign Up */}
                             {isSignUp && (
                                 <div className="form-group">
-                                    <label htmlFor="confirmPassword" className="form-label">
+                                    <label htmlFor="confirmPassword" className="auth-form-label">
                                         Confirm Passphrase
                                     </label>
                                     <div className="input-underline">
@@ -143,7 +140,7 @@ const Auth = () => {
                                             value={confirmPassword}
                                             onChange={(e) => setConfirmPassword(e.target.value)}
                                             required
-                                            className="input-field"
+                                            className="auth-input-field"
                                             placeholder="Repeat the secret..."
                                             minLength={6}
                                             disabled={loading}
@@ -166,14 +163,10 @@ const Auth = () => {
 
                             {/* Submit Button */}
                             <div className="form-actions">
-                                <button type="submit" className="btn-primary" disabled={loading}>
-                                    <div className="btn-shimmer"></div>
+                                <button type="submit" className="btn btn-primary auth-btn" disabled={loading}>
                                     <span className="btn-text">
                                         {loading ? <LoadingSpinner /> : isSignUp ? 'Begin Journey' : 'Resume Journey'}
                                     </span>
-                                    {!loading && (
-                                        <span className="material-symbols-outlined btn-arrow">arrow_forward</span>
-                                    )}
                                 </button>
 
                                 <div className="auth-divider">or</div>
@@ -181,7 +174,7 @@ const Auth = () => {
                                 <button
                                     type="button"
                                     onClick={handleGoogleSignIn}
-                                    className="btn-google"
+                                    className="btn btn-secondary btn-google"
                                     disabled={loading}
                                 >
                                     <img
