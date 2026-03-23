@@ -12,7 +12,9 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    
+    env:
+      TF_VAR_powershell_command: pwsh
+      
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
