@@ -47,6 +47,7 @@ jobs:
 
       - name: Terraform Apply
         env:
+          TF_VAR_powershell_command: pwsh
           TF_VAR_supabase_url: ${{ secrets.TF_VAR_SUPABASE_URL }}
           TF_VAR_supabase_service_key: ${{ secrets.TF_VAR_SUPABASE_SERVICE_KEY }}
           TF_VAR_encryption_key: ${{ secrets.TF_VAR_ENCRYPTION_KEY }}

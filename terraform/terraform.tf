@@ -10,7 +10,7 @@ terraform {
 # This block runs the PowerShell script and gets the file path and hash
 # It runs during 'plan' and 'apply' automatically.
 data "external" "lambda_package" {
-  program = ["Powershell.exe", "-ExecutionPolicy", "Bypass", "-File", "${path.module}/package_lambda.ps1"]
+  program = [var.powershell_command, "-ExecutionPolicy", "Bypass", "-File", "${path.module}/package_lambda.ps1"]
 }
 
 # --- 2. Provider Configuration ---
@@ -25,6 +25,11 @@ provider "aws" {
 }
 
 # --- 3. Variables ---
+variable "powershell_command" {
+  type    = string
+  default = "Powershell.exe"
+}
+
 variable "aws_region" { default = "ap-south-1" }
 variable "supabase_url" { type = string }
 variable "supabase_service_key" {
