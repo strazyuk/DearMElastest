@@ -68,7 +68,7 @@ const Auth = () => {
                             <div className="auth-icon-wrapper">
                                 <DearMELogo className="auth-logo-custom" />
                             </div>
-                            <h1 className="auth-title serif italic">DearME</h1>
+
                             <p className="auth-subtitle">
                                 {isSignUp
                                     ? 'Step into the river of time'

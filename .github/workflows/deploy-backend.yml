@@ -1,0 +1,59 @@
+name: Deploy Backend
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'backend/**'
+      - 'terraform/**'
+      - '.github/workflows/deploy-backend.yml'
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: '1.7.0'
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-south-1
+
+      - name: Package Lambda (PowerShell)
+        shell: pwsh
+        run: |
+          cd terraform
+          ./package_lambda.ps1
+
+      - name: Terraform Init
+        run: |
+          cd terraform
+          terraform init
+
+      - name: Terraform Apply
+        env:
+          TF_VAR_supabase_url: ${{ secrets.TF_VAR_SUPABASE_URL }}
+          TF_VAR_supabase_service_key: ${{ secrets.TF_VAR_SUPABASE_SERVICE_KEY }}
+          TF_VAR_encryption_key: ${{ secrets.TF_VAR_ENCRYPTION_KEY }}
+          TF_VAR_supabase_jwt_secret: ${{ secrets.TF_VAR_SUPABASE_JWT_SECRET }}
+          TF_VAR_database_url: ${{ secrets.TF_VAR_DATABASE_URL }}
+          TF_VAR_gemini_api_key: ${{ secrets.TF_VAR_GEMINI_API_KEY }}
+          TF_VAR_allowed_origins: ${{ secrets.TF_VAR_ALLOWED_ORIGINS }}
+        run: |
+          cd terraform
+          terraform apply -auto-approve

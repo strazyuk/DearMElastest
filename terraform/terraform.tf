@@ -1,3 +1,11 @@
+terraform {
+  backend "s3" {
+    bucket = "dearme-terraform-state-asira"
+    key    = "terraform/state"
+    region = "ap-south-1"
+  }
+}
+
 # --- 1. Automated Packaging (The "True Pure" Way for Windows) ---
 # This block runs the PowerShell script and gets the file path and hash
 # It runs during 'plan' and 'apply' automatically.
