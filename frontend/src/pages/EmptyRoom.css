@@ -1,0 +1,277 @@
+.empty-room {
+  height: 100dvh;
+  width: 100vw;
+  padding: var(--space-4) var(--space-4) 80px var(--space-4); /* bottom padding protects shadow */
+  display: flex;
+  flex-direction: column;
+  background-color: var(--bg-washi);
+  transition: background-color 1.5s var(--ease-zen);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Ritual Fade Controls */
+.room-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  z-index: 10;
+  transition: opacity 1.5s var(--ease-zen);
+}
+
+.empty-room.focused .room-header {
+  opacity: 0 !important;
+  pointer-events: none;
+}
+
+.room-kanji-bg, .raked-sand-watermark, .room-quote-sidebar {
+  transition: opacity 1.5s var(--ease-zen);
+}
+
+.empty-room.focused .room-kanji-bg,
+.empty-room.focused .raked-sand-watermark,
+.empty-room.focused .room-quote-sidebar {
+  opacity: 0 !important;
+  pointer-events: none;
+}
+
+.back-link-group {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 400ms var(--ease-zen);
+}
+
+.back-link-group:hover {
+  opacity: 1;
+}
+
+.back-link-group span:first-child {
+  font-size: 0.8rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.subtitle-jp {
+  font-family: 'Shippori Mincho', serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  opacity: 0.6;
+  text-transform: none;
+}
+
+/* Watermarks */
+.room-kanji-bg {
+  position: absolute;
+  top: -5vh;
+  left: -2vh;
+  font-size: 65vh;
+  opacity: 0.04;
+  z-index: 0;
+  pointer-events: none;
+  font-family: 'Shippori Mincho', serif;
+  transform: rotate(-3deg);
+  color: var(--text-sumi);
+}
+
+.raked-sand-watermark {
+  position: absolute;
+  bottom: -50px;
+  right: -50px;
+  width: 500px;
+  height: 500px;
+  opacity: 0.03;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.raked-sand-watermark img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* Main Creation Area */
+.writing-surface {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start; /* Start from top for scroll look */
+  z-index: 10;
+  overflow: visible;
+  padding-top: var(--space-4);
+  min-height: 0;
+}
+
+.writing-container-elevated {
+  background-color: var(--bg-washi);
+  padding: var(--space-8);
+  width: 100%;
+  max-width: 650px;
+  height: 100%; /* Fill the vertical scroll area */
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  border-radius: 2px;
+  /* Ultra-Subtle Screened Shadows */
+  box-shadow:
+    0 15px 50px -20px rgba(0, 0, 0, 0.02),
+    0 5px 15px -12px rgba(0, 0, 0, 0.01);
+  border: 1px solid rgba(0, 0, 0, 0.01);
+  position: relative;
+  overflow: hidden;
+  transition: box-shadow 1.5s var(--ease-zen);
+}
+
+.empty-room.focused .writing-container-elevated {
+  box-shadow:
+    0 25px 60px -20px rgba(0, 0, 0, 0.06),
+    0 10px 20px -10px rgba(0, 0, 0, 0.03);
+  border: 1px solid rgba(0, 0, 0, 0.03);
+}
+
+.title-input {
+  background: transparent;
+  border: none;
+  font-size: 3rem; /* Scaled for narrower width */
+  font-family: 'Shippori Mincho', serif;
+  color: var(--text-sumi);
+  width: 100%;
+  outline: none;
+  letter-spacing: -0.02em;
+  white-space: normal;
+  overflow-wrap: break-word;
+  flex-shrink: 0;
+}
+
+.content-area {
+  background: transparent;
+  border: none;
+  width: 100%;
+  flex: 1;
+  resize: none;
+  color: var(--text-sumi);
+  font-size: 1.3rem;
+  line-height: 2;
+  outline: none;
+  caret-color: var(--accent-seal);
+  overflow-y: auto;
+  padding-right: var(--space-4);
+}
+
+/* Custom minimal scrollbar */
+.content-area::-webkit-scrollbar {
+  width: 3px;
+}
+.content-area::-webkit-scrollbar-track {
+  background: transparent;
+}
+.content-area::-webkit-scrollbar-thumb {
+  background: var(--ui-stone);
+  opacity: 0.1;
+}
+
+.content-area:focus {
+  animation: cursor-blink 800ms infinite alternate;
+}
+
+@keyframes cursor-blink {
+  from { caret-color: var(--accent-seal); }
+  to { caret-color: transparent; }
+}
+
+/* Ritual Sidebar (Controls & Context) */
+.room-quote-sidebar {
+  position: absolute;
+  right: var(--space-8);
+  top: 10%;
+  width: 250px;
+  border-left: 1px solid var(--ui-stone);
+  padding-left: var(--space-4);
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+
+.ritual-quote-alt {
+  opacity: 0.6;
+}
+
+.quote-mark {
+  font-size: 4rem;
+  line-height: 1;
+  color: var(--accent-moss);
+  font-family: 'Shippori Mincho', serif;
+  margin-bottom: -1.5rem;
+  margin-left: -0.5rem;
+}
+
+.quote-text {
+  font-style: italic;
+  font-size: 1.1rem;
+  line-height: 1.8;
+  margin-bottom: var(--space-4);
+}
+
+.room-metadata-area-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.metadata-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.ui-input {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  padding: var(--space-2) 0;
+  transition: all 400ms var(--ease-zen);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.95rem;
+  width: 100%;
+  color: var(--text-sumi);
+}
+
+.ui-input:focus {
+  border-bottom: 1px solid var(--accent-seal);
+  outline: none;
+}
+
+.sidebar-action {
+  margin-top: var(--space-2);
+  display: flex;
+}
+
+.flex-col-center {
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  width: 80px; /* Match button width for centering */
+}
+
+.stamp-subtitle {
+  margin-top: -4px; /* Pull closer to the square block */
+  text-align: center;
+}
+
+/* Ritual Sealing Transition */
+.empty-room.sealing .writing-surface {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 1.5s var(--ease-zen);
+  filter: blur(4px);
+}

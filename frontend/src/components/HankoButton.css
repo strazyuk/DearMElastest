@@ -1,0 +1,47 @@
+.hanko-button {
+  background-color: var(--accent-seal);
+  color: var(--bg-washi);
+  border: none;
+  cursor: pointer;
+  transition: all var(--duration-med) var(--ease-zen);
+  border-radius: 0; /* Traditional squared-off seal */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  position: relative;
+  box-shadow: 2px 2px 0px rgba(0,0,0,0.1);
+}
+
+.hanko-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 4px 4px 0px rgba(0,0,0,0.1);
+  background-color: #b7573d;
+}
+
+.hanko-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  line-height: 1.1;
+  gap: 2px;
+}
+
+.hanko-label-en {
+  color: var(--bg-washi);
+  text-transform: lowercase;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  font-size: 0.75rem;
+  opacity: 0.9;
+}
+
+.hanko-label-jp {
+  color: var(--bg-washi);
+  font-family: 'Shippori Mincho', serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}

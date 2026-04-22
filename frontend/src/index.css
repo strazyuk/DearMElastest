@@ -1,248 +1,139 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;700&family=Plus+Jakarta+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+:root {
+  /* The Five Elements (Zen Palette) */
+  --bg-washi: #F9F8F5;
+  --text-sumi: #1A1A1B;
+  --bg-mist: #E8E6E1;
+  --accent-moss: #8C9081;
+  --accent-seal: #A64D32;
+  --ui-stone: #D1CCC0;
 
-/* CSS Reset and Base Styles */
+  /* Spacing (Ma) Tokens */
+  --space-1: 8px;
+  --space-2: 16px;
+  --space-4: 32px;
+  --space-8: 64px;
+  --space-9: 96px;
+
+  /* Transitions */
+  --ease-zen: cubic-bezier(0.2, 0, 0, 1.0);
+  --duration-slow: 800ms;
+  --duration-med: 400ms;
+  --duration-fast: 200ms;
+}
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-}
-
-/* CSS Custom Properties - Quiet Depth Theme */
-:root {
-  /* Core Colors */
-  --primary-color: #c9a87c; /* Warm amber/dusty rose accent */
-  --primary-dark: #b08c5d;
-  --primary-light: #e6dac6;
-  
-  --background: #0e0e0e; /* Deep charcoal */
-  --background-hover: #1a1a1a;
-  --card-background: #181818;
-  
-  --text-color: #f5f0ea; /* Warm off-white */
-  --text-secondary: #a39e99;
-  
-  --border-color: #2a2a2a;
-
-  /* States */
-  --success: #34d399;
-  --error: #f87171;
-  --warning: #fbbf24;
-  --info: #60a5fa;
-
-  /* Shadows */
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
-  --shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-  --shadow-md: 0 10px 15px rgba(0, 0, 0, 0.3);
-  --shadow-lg: 0 20px 25px rgba(0, 0, 0, 0.4);
-
-  /* Transitions */
-  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* Base Typography */
-body {
-  font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  color: var(--text-color);
-  background: var(--background);
-  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 }
 
-/* Typography Classes */
-.serif {
-  font-family: 'Playfair Display', serif;
-}
-.italic {
-  font-style: italic;
-}
-
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+body {
+  background-color: var(--bg-washi);
+  color: var(--text-sumi);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  overflow-x: hidden;
+  animation: breathe 10s infinite alternate var(--ease-zen);
+  position: relative;
 }
 
-/* Common Utilities */
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 1.5rem;
+.zen-app-wrapper {
+  position: relative;
+  min-height: 100vh;
+  width: 100%;
+  z-index: 10;
 }
 
-/* Grain Noise Overlay Texture - Global utility class */
-.noise-overlay {
-  position: absolute;
-  inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
+/* Washi Grain Overlay */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   pointer-events: none;
-  z-index: 1;
+  z-index: 9999;
+  opacity: 0.04;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
 }
 
-/* Button Styles */
-button {
-  font-family: inherit;
-  outline: none;
+/* Typography Hierarchy Elevation */
+h1, .hero-title {
+  font-family: 'Shippori Mincho', serif;
+  font-weight: 700;
+  line-height: 1.1;
+  font-size: 8rem; /* Dramatic Scale */
+  letter-spacing: -0.02em;
 }
 
-.btn {
-  padding: 0.75rem 1.5rem;
-  border-radius: 4px; /* Flatter, architectural borders */
-  font-weight: 500;
-  letter-spacing: 0.02em;
-  cursor: pointer;
-  transition: var(--transition);
-  border: 1px solid transparent;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
+h2, .editorial-header {
+  font-family: 'Shippori Mincho', serif;
+  font-size: 4rem;
+  margin-bottom: var(--space-4);
+  opacity: 0.9;
 }
 
-.btn-primary {
-  background: var(--primary-color);
-  color: #000;
-  border: 1px solid var(--primary-light);
+.label, .ui-text {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.75rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--accent-moss);
 }
 
-.btn-primary:hover:not(:disabled) {
-  background: var(--primary-light);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(201, 168, 124, 0.15);
+/* Ink Bleed Effect */
+.hanko-button, .begin-link {
+  transition: all var(--duration-med) var(--ease-zen);
 }
 
-.btn-secondary {
-  background: transparent;
-  color: var(--text-color);
-  border: 1px solid var(--border-color);
+.hanko-button:hover {
+  filter: drop-shadow(0 0 8px rgba(166, 77, 50, 0.3));
+  transform: scale(1.02);
 }
 
-.btn-secondary:hover:not(:disabled) {
-  background: var(--background-hover);
-  border-color: var(--text-secondary);
+.timestamp {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.75rem;
+  color: var(--ui-stone);
 }
 
-.btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  transform: none !important;
-  box-shadow: none !important;
-}
-
-/* Form Styles */
-.form-group {
+/* Layout Utilities (Ma) */
+.garden-container {
+  max-width: none;
+  min-height: 100vh;
+  padding: var(--space-9) var(--space-4);
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
 }
 
-.form-label {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-weight: 500;
-  color: var(--text-secondary);
-  font-size: 0.875rem;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-}
-
-.form-input,
-.form-select {
-  padding: 0.875rem 1rem;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid var(--border-color);
-  border-radius: 4px;
-  font-size: 1rem;
-  font-family: inherit;
-  transition: var(--transition);
-  color: var(--text-color);
-  width: 100%;
-}
-
-.form-input:focus,
-.form-select:focus {
+/* Focus States */
+input:focus, textarea:focus {
   outline: none;
-  border-color: var(--primary-color);
-  background: rgba(255, 255, 255, 0.05);
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
 }
 
-.form-input:disabled,
-.form-select:disabled {
-  background: var(--background-hover);
-  cursor: not-allowed;
-  opacity: 0.5;
+/* Selection Ripple (Custom) */
+.ripple-effect {
+  position: relative;
+  overflow: hidden;
 }
 
-/* Card Styles */
-.card {
-  background: var(--card-background);
-  border-radius: 8px;
-  border: 1px solid var(--border-color);
-  padding: 2rem;
-  box-shadow: var(--shadow);
+.ripple-effect::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background: radial-gradient(circle, rgba(209, 204, 192, 0.2) 0%, transparent 70%);
+  transform: scale(0);
+  transition: transform 600ms var(--ease-zen);
+  pointer-events: none;
 }
 
-/* Link Styles */
-a {
-  color: var(--primary-color);
-  text-decoration: none;
-  transition: var(--transition);
-}
-
-a:hover {
-  color: var(--primary-light);
-  text-decoration: underline;
-  text-underline-offset: 4px;
-}
-
-/* Scrollbar Styles */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: var(--background);
-}
-
-::-webkit-scrollbar-thumb {
-  background: #333;
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #555;
-}
-
-/* Animations */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.fade-in {
-  animation: fadeIn 0.4s ease-out;
-}
-
-.slide-up {
-  animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+.ripple-effect:active::after {
+  transform: scale(2);
 }

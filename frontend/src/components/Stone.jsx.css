@@ -1,0 +1,56 @@
+.stone-entry {
+  display: flex;
+  gap: var(--space-4);
+  margin-bottom: var(--space-9);
+  max-width: 600px;
+  transition: transform var(--duration-slow) var(--ease-zen);
+}
+
+.stone-marker {
+  width: 12px;
+  height: 12px;
+  background-color: var(--ui-stone);
+  border-radius: 50%;
+  margin-top: 10px;
+  flex-shrink: 0;
+  transition: background-color var(--duration-med) var(--ease-zen);
+}
+
+.stone-entry:hover .stone-marker {
+  background-color: var(--accent-moss);
+}
+
+.stone-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.locked-indicator {
+  color: var(--ui-stone);
+  font-style: italic;
+  margin-top: var(--space-1);
+}
+
+/* Asymmetry (Fukinsei) */
+.offset-left {
+  align-self: flex-start;
+  margin-left: 10%;
+}
+
+.offset-right {
+  align-self: flex-end;
+  margin-right: 15%;
+}
+
+.offset-center {
+  align-self: center;
+}
+
+@media (max-width: 768px) {
+  .offset-left, .offset-right, .offset-center {
+    align-self: flex-start;
+    margin-left: 0;
+    margin-right: 0;
+  }
+}

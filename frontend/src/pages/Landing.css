@@ -1,0 +1,233 @@
+.landing-container {
+  background-color: var(--bg-washi);
+  color: var(--text-sumi);
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* Floating Enso Motif */
+.landing-enso-bg {
+  position: absolute;
+  top: 10%;
+  right: -5%;
+  width: 70vh;
+  height: 70vh;
+  opacity: 0.05;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.landing-enso-bg img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* Static Koi Motifs */
+.landing-koi-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 5;
+  overflow: hidden;
+}
+
+.koi-static-motif {
+  position: absolute;
+  opacity: 0.02; /* Ghost Ink Visibility */
+  filter: grayscale(1) contrast(1.1) blur(1px);
+  pointer-events: none;
+}
+
+.motif-peripheral {
+  bottom: -5%;
+  right: -5%;
+  width: 45vw;
+  transform: rotate(165deg) scaleX(-1);
+}
+
+/* Hero Section Drama */
+.hero-section {
+  position: relative;
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  overflow: hidden;
+}
+
+.hero-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 120%; /* Extra height for parallax */
+  background-size: cover;
+  background-position: center;
+  z-index: 1;
+  filter: contrast(1.1) brightness(1.02); /* Clean Sumi-e Pop */
+}
+
+.hero-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at center, transparent 0%, var(--bg-washi) 100%);
+  z-index: 2;
+  opacity: 0.85;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 20;
+}
+
+.hero-kana {
+  font-size: 15vh;
+  position: absolute;
+  top: -10vh;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: -1;
+  color: var(--text-sumi);
+}
+
+.hero-title {
+  margin-bottom: var(--space-4);
+  font-size: 10vw;
+  line-height: 0.9;
+}
+
+.hero-subtitle {
+  opacity: 0.6;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  font-size: 1rem;
+}
+
+/* Ritual Overview Section */
+.ritual-overview-section {
+  padding: var(--space-9) var(--space-8);
+  display: flex;
+  justify-content: center;
+  gap: var(--space-8);
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.ritual-step {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.step-number {
+  font-size: 4rem;
+  opacity: 0.1;
+  line-height: 1;
+}
+
+.step-title-group {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+}
+
+.step-title-group h3 {
+  font-size: 2rem;
+  margin: 0;
+}
+
+/* Philosophy Section Elevation */
+.philosophy-section {
+  padding: var(--space-9) var(--space-8);
+  display: flex;
+  justify-content: center;
+  gap: var(--space-8);
+  max-width: 1400px;
+  margin: 10vh auto;
+  position: relative;
+  z-index: 20;
+}
+
+.philosophy-header-group {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
+.japanese-vertical-label {
+  writing-mode: vertical-rl;
+  font-family: 'Shippori Mincho', serif;
+  font-size: 1.5rem;
+  opacity: 0.2;
+  line-height: 1;
+}
+
+.vertical-divider {
+  width: 1px;
+  height: 300px;
+  background-color: var(--ui-stone);
+  opacity: 0.3;
+  align-self: center;
+}
+
+.philosophy-item {
+  flex: 1;
+  max-width: 400px;
+}
+
+/* CTA Elevation */
+.cta-section {
+  height: 80vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  z-index: 20;
+}
+
+.cta-content {
+  text-align: center;
+}
+
+.mt-8 {
+  margin-top: var(--space-8);
+}
+
+.landing-footer {
+  padding: var(--space-8);
+  display: flex;
+  justify-content: space-between;
+  opacity: 0.4;
+  font-size: 0.8rem;
+  letter-spacing: 0.05em;
+}
+
+@media (max-width: 1024px) {
+  .philosophy-section, .ritual-overview-section {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  .vertical-divider {
+    width: 100px;
+    height: 1px;
+    margin: var(--space-8) 0;
+  }
+  .hero-title {
+    font-size: 5rem;
+  }
+  .philosophy-header-group {
+    justify-content: center;
+  }
+}

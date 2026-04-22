@@ -1,225 +1,92 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { useAuth } from '../contexts/AuthContext'
-import LoadingSpinner from '../components/LoadingSpinner'
-import './Auth.css'
-import DearMELogo from '../components/DearMELogo'
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { supabase } from '../services/supabase';
+import HankoButton from '../components/HankoButton';
+import './Auth.css';
 
 const Auth = () => {
-    const [isSignUp, setIsSignUp] = useState(false)
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
-    const [confirmPassword, setConfirmPassword] = useState('')
-    const [loading, setLoading] = useState(false)
-    const [error, setError] = useState('')
-    const [showPassword, setShowPassword] = useState(false)
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [isSignUp, setIsSignUp] = useState(false);
+  const [message, setMessage] = useState('');
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
-    const { signIn, signUp, signInWithGoogle } = useAuth()
-    const navigate = useNavigate()
+  const handleAuth = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setMessage('');
 
-    const handleGoogleSignIn = async () => {
-        try {
-            setError('')
-            setLoading(true)
-            await signInWithGoogle()
-        } catch (err) {
-            setError(err.message || 'Failed to sign in with Google')
-            setLoading(false)
-        }
+    try {
+      if (isSignUp) {
+        const { error } = await supabase.auth.signUp({ email, password });
+        if (error) throw error;
+        setMessage('A path has been created. Check your inbox.');
+      } else {
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+        navigate('/garden');
+      }
+    } catch (error) {
+      setMessage('The path is blocked.');
+    } finally {
+      setLoading(false);
     }
+  };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault()
-        setError('')
+  return (
+    <div className="auth-page">
+      <div className="auth-koi-bg">
+        <img src="/images/sumi_e_koi.png" alt="" className="koi-static-motif motif-auth" />
+      </div>
+      <div className="auth-card">
+        <h1 className="editorial">{isSignUp ? 'Begin the Journey' : 'Return to Stillness'}</h1>
+        
+        <form onSubmit={handleAuth}>
+          <div className="input-group">
+            <span className="ui-text">spirit</span>
+            <input 
+              type="email" 
+              className="ui-input" 
+              placeholder="email@shrine.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required 
+            />
+          </div>
 
-        // Validate password confirmation for signup
-        if (isSignUp && password !== confirmPassword) {
-            setError('The passphrases must align. Please check and try again.')
-            return
-        }
+          <div className="input-group">
+            <span className="ui-text">key</span>
+            <input 
+              type="password" 
+              className="ui-input" 
+              placeholder="••••••••"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required 
+            />
+          </div>
 
-        setLoading(true)
+          <div className="auth-actions">
+            <HankoButton disabled={loading}>
+              <div className="hanko-content">
+                <span className="hanko-label-en">{loading ? '...' : (isSignUp ? 'create' : 'enter')}</span>
+                <span className="hanko-label-jp">{isSignUp ? '創る' : '入る'}</span>
+              </div>
+            </HankoButton>
+          </div>
+        </form>
 
-        try {
-            if (isSignUp) {
-                await signUp(email, password)
-            } else {
-                await signIn(email, password)
-            }
-            navigate('/dashboard')
-        } catch (err) {
-            setError(err.message || 'Authentication failed. Please try again.')
-        } finally {
-            setLoading(false)
-        }
-    }
+        {message && <div className="auth-message ui-text">{message}</div>}
 
-    return (
-        <div className="auth-container">
-            {/* Grain Noise Overlay */}
-            <div className="noise-overlay"></div>
-
-            <main className="auth-main">
-                <div className="auth-card-wrapper fade-in">
-                    <div className="auth-card solid-panel">
-
-                        {/* Header */}
-                        <div className="auth-header">
-                            <div className="auth-icon-wrapper">
-                                <DearMELogo className="auth-logo-custom" />
-                            </div>
-
-                            <p className="auth-subtitle">
-                                {isSignUp
-                                    ? 'Step into the river of time'
-                                    : 'Welcome back, time traveller'}
-                            </p>
-                        </div>
-
-                        {/* Form */}
-                        <form onSubmit={handleSubmit} className="auth-form">
-                            {/* Email Field */}
-                            <div className="form-group">
-                                <label htmlFor="email" className="auth-form-label">
-                                    Traveller
-                                </label>
-                                <div className="input-underline">
-                                    <input
-                                        type="email"
-                                        id="email"
-                                        value={email}
-                                        onChange={(e) => setEmail(e.target.value)}
-                                        required
-                                        className="auth-input-field"
-                                        placeholder="Who are you?"
-                                        disabled={loading}
-                                    />
-                                    <span className="material-symbols-outlined input-icon">person_outline</span>
-                                </div>
-                            </div>
-
-                            {/* Password Field */}
-                            <div className="form-group">
-                                <label htmlFor="password" className="auth-form-label">
-                                    {isSignUp ? 'Choose Passphrase' : 'Passphrase'}
-                                </label>
-                                <div className="input-underline">
-                                    <input
-                                        type={showPassword ? 'text' : 'password'}
-                                        id="password"
-                                        value={password}
-                                        onChange={(e) => setPassword(e.target.value)}
-                                        required
-                                        className="auth-input-field"
-                                        placeholder={isSignUp ? "Create your secret..." : "The secret word..."}
-                                        minLength={6}
-                                        disabled={loading}
-                                    />
-                                    <button
-                                        type="button"
-                                        onClick={() => setShowPassword(!showPassword)}
-                                        className="password-toggle"
-                                    >
-                                        <span className="material-symbols-outlined">
-                                            {showPassword ? 'visibility' : 'visibility_off'}
-                                        </span>
-                                    </button>
-                                </div>
-                            </div>
-
-                            {/* Confirm Password Field - Only for Sign Up */}
-                            {isSignUp && (
-                                <div className="form-group">
-                                    <label htmlFor="confirmPassword" className="auth-form-label">
-                                        Confirm Passphrase
-                                    </label>
-                                    <div className="input-underline">
-                                        <input
-                                            type={showPassword ? 'text' : 'password'}
-                                            id="confirmPassword"
-                                            value={confirmPassword}
-                                            onChange={(e) => setConfirmPassword(e.target.value)}
-                                            required
-                                            className="auth-input-field"
-                                            placeholder="Repeat the secret..."
-                                            minLength={6}
-                                            disabled={loading}
-                                        />
-                                        <button
-                                            type="button"
-                                            onClick={() => setShowPassword(!showPassword)}
-                                            className="password-toggle"
-                                        >
-                                            <span className="material-symbols-outlined">
-                                                {showPassword ? 'visibility' : 'visibility_off'}
-                                            </span>
-                                        </button>
-                                    </div>
-                                </div>
-                            )}
-
-                            {/* Error Message */}
-                            {error && <div className="error-message">{error}</div>}
-
-                            {/* Submit Button */}
-                            <div className="form-actions">
-                                <button type="submit" className="btn btn-primary auth-btn" disabled={loading}>
-                                    <span className="btn-text">
-                                        {loading ? <LoadingSpinner /> : isSignUp ? 'Begin Journey' : 'Resume Journey'}
-                                    </span>
-                                </button>
-
-                                <div className="auth-divider">or</div>
-
-                                <button
-                                    type="button"
-                                    onClick={handleGoogleSignIn}
-                                    className="btn btn-secondary btn-google"
-                                    disabled={loading}
-                                >
-                                    <img
-                                        src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
-                                        alt="Google"
-                                        className="google-icon"
-                                    />
-                                    <span>
-                                        {isSignUp ? 'Sign up with Google' : 'Sign in with Google'}
-                                    </span>
-                                </button>
-
-                                {/* Toggle Links */}
-                                <div className="auth-links">
-                                    <a href="#" className="auth-link">Forgotten path?</a>
-                                    <button
-                                        type="button"
-                                        onClick={() => {
-                                            setIsSignUp(!isSignUp)
-                                            setError('')
-                                            setConfirmPassword('')
-                                        }}
-                                        className="auth-link-toggle"
-                                        disabled={loading}
-                                    >
-                                        <span className="link-text-muted">
-                                            {isSignUp ? 'Already exploring?' : 'New here?'}
-                                        </span>
-                                        <span className="link-text-accent">
-                                            {isSignUp ? 'Sign In' : 'Begin'}
-                                        </span>
-                                    </button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-
-                    {/* Footer */}
-                    <div className="auth-footer">
-                        <p>© 2026 DearME. Echoes of tomorrow.</p>
-                    </div>
-                </div>
-            </main>
+        <div className="auth-toggle ui-text">
+          <span onClick={() => setIsSignUp(!isSignUp)}>
+            {isSignUp ? 'already a pilgrim? enter' : 'new to the garden? begin'}
+          </span>
         </div>
-    )
-}
+      </div>
+    </div>
+  );
+};
 
-export default Auth
+export default Auth;
